@@ -1,32 +1,81 @@
-import React, {useState} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ToastAndroid,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {InputField} from '../components/InputField';
-import { Button } from '../components/Button';
-import { useNavigation } from '@react-navigation/native';
+import {Button} from '../components/Button';
+import {useNavigation,useIsFocused } from '@react-navigation/native';
+import axios from 'axios';
+import {baseUrl} from '../URL';
+import {getToken, storeToken} from '../utils/storage';
 
 export const Signup = (): React.JSX.Element => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword,setConfirmPassword]=useState('')
-  const navigation=useNavigation();
-  const currentYear=new Date().getFullYear();
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const navigation = useNavigation();
+  const isFocused = useIsFocused();
+  const currentYear = new Date().getFullYear();
+
+  useEffect(() => {
+    if(isFocused){
+      checkIfLoggedIn();
+    }
+  },[isFocused]);
+
+  const checkIfLoggedIn = async () => {
+    try {
+      const token = await getToken();
+      console.log("1")
+      console.log(token)
+      if (token) {
+        navigation.navigate('Posts');
+      }
+    } catch (error) {
+      console.error('Error checking login status:', error);
+    }
+  };
+
   const handleEmailChange = (text: string) => {
     setEmail(text);
   };
   const handlePasswordChange = (text: string) => {
     setPassword(text);
   };
-  const handleConfirmPasswordChange=(text:string)=>{
-    setConfirmPassword(text)
-  }
-  const handleSignUp=()=>{
-    console.log("Clicked")
-    console.log(email,password)
-  }
-  const handleChangeScreen=()=>{
-    navigation.navigate('Login')
-  }
+  const handleConfirmPasswordChange = (text: string) => {
+    setConfirmPassword(text);
+  };
+  const handleSignUp = async () => {
+    try {
+      const response = await axios.post(`${baseUrl}/auth/create`, {
+        email,
+        password,
+        confirmPassword,
+      });
+      JSON.stringify(response);
+      if (response.data.statusCode === 200) {
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+        navigation.navigate('Login');
+      }else{
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+        setEmail('')
+        setPassword('')
+        setConfirmPassword('')
+      }
+    } catch (error: any) {
+      console.log(error);
+      ToastAndroid.show(error.message, ToastAndroid.SHORT);
+    }
+  };
+  const handleChangeScreen = () => {
+    navigation.navigate('Login');
+  };
   return (
     <SafeAreaView>
       <View style={styles.container}>
@@ -53,12 +102,9 @@ export const Signup = (): React.JSX.Element => {
           value={confirmPassword}
           onChangeText={text => handleConfirmPasswordChange(text)}
         />
-        <Button 
-            title="Signup"
-            onPress={handleSignUp}
-        />
+        <Button title="Signup" onPress={handleSignUp} />
         <TouchableOpacity style={styles.login} onPress={handleChangeScreen}>
-            <Text>Already have an account? Login</Text>
+          <Text>Already have an account? Login</Text>
         </TouchableOpacity>
         <Text style={styles.footer}>Copyright @{currentYear}</Text>
       </View>
@@ -77,12 +123,12 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 100,
   },
-  login:{
-    marginBottom:180
+  login: {
+    marginBottom: 180,
   },
-  footer:{
-    fontFamily:'Arata-Regular',
-    fontSize:15,
-    fontWeight:'bold'
-  }
+  footer: {
+    fontFamily: 'Arata-Regular',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
 });
