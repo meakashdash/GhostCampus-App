@@ -49,8 +49,6 @@ export const Login = (): React.JSX.Element => {
     setPassword(text);
   };
   const handleLogin = async () => {
-    await removeToken();
-    return
     const response = await axios.post(`${baseUrl}/auth/login`, {
       email,
       password,
