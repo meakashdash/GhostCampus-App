@@ -35,7 +35,7 @@ export const Signup = (): React.JSX.Element => {
       console.log("1")
       console.log(token)
       if (token) {
-        navigation.navigate('Posts');
+        navigation.navigate('HomeScreen');
       }
     } catch (error) {
       console.error('Error checking login status:', error);

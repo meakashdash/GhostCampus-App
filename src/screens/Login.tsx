@@ -35,7 +35,7 @@ export const Login = (): React.JSX.Element => {
       console.log("1")
       console.log(token)
       if (token) {
-        navigation.navigate('Posts');
+        navigation.navigate('HomeScreen');
       }
     } catch (error) {
       console.error('Error checking login status:', error);
@@ -57,7 +57,7 @@ export const Login = (): React.JSX.Element => {
     if (response.data.statusCode === 200) {
       storeToken(response.data.token);
       ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-      navigation.navigate('Posts');
+      navigation.navigate('HomeScreen');
     }
     else{
       ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
