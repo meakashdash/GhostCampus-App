@@ -80,14 +80,14 @@ export const Post = ({username,profileIcon,timeAgo,title,tagColor,tagText,media,
           <View style={styles.leftButton}>
             <TouchableOpacity>
               <Image
-                source={isLiked?require('../assets/color-arrow-up.png'):require('../assets/gray-arrow-up.png')}
+                source={isLiked?require('../../assets/color-arrow-up.png'):require('../../assets/gray-arrow-up.png')}
                 style={styles.bottomIcon}
               />
             </TouchableOpacity>
             <Text style={styles.bottomCount}>{upvotes}</Text>
             <TouchableOpacity>
               <Image
-                source={require('../assets/gray-arrow-down.png')}
+                source={require('../../assets/gray-arrow-down.png')}
                 style={styles.bottomIcon}
               />
             </TouchableOpacity>
@@ -95,7 +95,7 @@ export const Post = ({username,profileIcon,timeAgo,title,tagColor,tagText,media,
           <View style={styles.middleButton}>
             <TouchableOpacity>
               <Image
-                source={require('../assets/gray-message.png')}
+                source={require('../../assets/gray-message.png')}
                 style={styles.bottomIcon}
               />
               </TouchableOpacity>
@@ -104,13 +104,13 @@ export const Post = ({username,profileIcon,timeAgo,title,tagColor,tagText,media,
           <View style={styles.rightButton}>
             <TouchableOpacity style={styles.bookMark}>
               <Image
-                source={isBookmarked?require('../assets/color-archive-add.png'):require('../assets/gray-archive-add.png')}
+                source={isBookmarked?require('../../assets/color-archive-add.png'):require('../../assets/gray-archive-add.png')}
                 style={styles.bottomIcon}
               />
             </TouchableOpacity>
             <TouchableOpacity>
               <Image
-                source={require('../assets/gray-share.png')}
+                source={require('../../assets/gray-share.png')}
                 style={styles.bottomIcon}
               />
             </TouchableOpacity>
@@ -128,7 +128,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   userName: {
-    fontWeight: 'bold',
+    fontFamily:'Montserrat-SemiBold',
+    color:'#000000'
   },
   header: {
     flexDirection: 'row',
@@ -143,11 +144,14 @@ const styles = StyleSheet.create({
   },
   timeAgo: {
     marginLeft: 'auto',
+    fontFamily:'Montserrat-Medium',
+    color:'#000000'
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
     marginBottom: 10,
+    fontFamily:'Montserrat-Bold',
+    color:"#000000"
   },
   tagContainer: {
     flexDirection: 'row',

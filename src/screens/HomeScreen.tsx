@@ -23,7 +23,7 @@ export const HomeScreen = (): React.JSX.Element => {
             profileIcon={profileUrl?profileUrl:sampleUrl}
             timeAgo='5 minutes ago'
             title='A test title'
-            tagColor='#ff0000'
+            tagColor='#FF9500'
             tagText='Confession'
             media={media}
             upvotes={56}

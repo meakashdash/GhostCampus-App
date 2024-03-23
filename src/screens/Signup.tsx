@@ -79,7 +79,7 @@ export const Signup = (): React.JSX.Element => {
   return (
     <SafeAreaView>
       <View style={styles.container}>
-        <Image style={styles.logo} source={require('../assets/LOGO.png')} />
+        <Image style={styles.logo} source={require('../../assets/LOGO.png')} />
         <InputField
           placeholder="Enter Your Email"
           width={340}
@@ -127,8 +127,7 @@ const styles = StyleSheet.create({
     marginBottom: 180,
   },
   footer: {
-    fontFamily: 'Arata-Regular',
+    fontFamily:'Montserrat-Bold',
     fontSize: 15,
-    fontWeight: 'bold',
   },
 });

@@ -21,32 +21,32 @@ export const BottomTab = (): React.JSX.Element => {
 
                     if(route.name==="HomeScreen"){
                         iconSource=focused
-                        ? require('../assets/color-home-icon.png')
-                        : require('../assets/gray-home-icon.png')
+                        ? require('../../assets/color-home-icon.png')
+                        : require('../../assets/gray-home-icon.png')
                     }
 
                     if(route.name==="Profile"){
                         iconSource=focused
-                        ? require('../assets/color-profile-circle.png')
-                        : require('../assets/gray-profile-circle.png')
+                        ? require('../../assets/color-profile-circle.png')
+                        : require('../../assets/gray-profile-circle.png')
                     }
 
                     if(route.name==="Trending"){
                         iconSource=focused
-                        ? require('../assets/color-trending-icon.png')
-                        : require('../assets/gray-trending-icon.png')
+                        ? require('../../assets/color-trending-icon.png')
+                        : require('../../assets/gray-trending-icon.png')
                     }
 
                     if(route.name==="Notification"){
                         iconSource=focused
-                        ? require('../assets/color-notification-icon.png')
-                        : require('../assets/gray-notification-icon.png')
+                        ? require('../../assets/color-notification-icon.png')
+                        : require('../../assets/gray-notification-icon.png')
                     }
 
                     if(route.name==="AddPost"){
                         iconSource=focused
-                        ? require('../assets/add-post-icon.png')
-                        : require('../assets/add-post-icon.png')
+                        ? require('../../assets/add-post-icon.png')
+                        : require('../../assets/add-post-icon.png')
                     }
 
                     return (

@@ -71,7 +71,7 @@ export const Login = (): React.JSX.Element => {
   return (
     <SafeAreaView>
       <View style={styles.container}>
-        <Image style={styles.logo} source={require('../assets/LOGO.png')} />
+        <Image style={styles.logo} source={require('../../assets/LOGO.png')} />
         <InputField
           placeholder="Enter Your Email"
           width={340}

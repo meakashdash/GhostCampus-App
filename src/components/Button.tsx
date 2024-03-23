@@ -26,8 +26,7 @@ const styles=StyleSheet.create({
     },
     buttontext:{
         color:'#ffffff',
-        fontFamily:'Arata-Regular',
+        fontFamily:'Montserrat-Bold',
         fontSize:16,
-        fontWeight: 'bold'
     }
 })

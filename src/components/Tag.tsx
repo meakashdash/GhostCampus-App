@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
   },
   tagText: {
     color: 'white',
+    fontFamily:'Montserrat-Medium',
     flexShrink: 1, 
     flexWrap: "wrap"
   },
