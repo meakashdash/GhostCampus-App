@@ -6,71 +6,51 @@ import {
   Text,
   View,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import Tag from './Tag';
-import {VideoComponent} from './VideoComponent';
 import Swiper from 'react-native-swiper';
 import Video, {VideoRef} from 'react-native-video';
 
-// interface PostProps {
-//   username: string;
-//   profileIcon: string;
-//   timeAgo: string;
-//   title: string;
-//   tags: string[];
-//   media: string[]; // Array of image or video URLs
-//   upvotes: number;
-//   comments: number;
-//   bookmarked: boolean;
-// }
+interface PostProps {
+  username: string;
+  profileIcon: string;
+  timeAgo: string;
+  title: string;
+  tagColor:string,
+  tagText:string,
+  media: Media;
+  upvotes: number;
+  comments: number;
+  isLiked:boolean,
+  isBookmarked: boolean;
+}
 
-const profileUrl = 'https://cdn-icons-png.flaticon.com/128/1144/1144760.png';
-const media = {
-  images: [
-    'https://plus.unsplash.com/premium_photo-1669324357471-e33e71e3f3d8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8dXJsfGVufDB8fDB8fHww',
-  ],
-  videos: [
-    'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-  ],
-};
-
-export const Post = (): React.JSX.Element => {
+interface Media{
+  images:string[],
+  videos:string[]
+}
+ 
+export const Post = ({username,profileIcon,timeAgo,title,tagColor,tagText,media,upvotes,comments,isLiked,isBookmarked}:PostProps): React.JSX.Element => {
   const swiperRef = useRef(null);
   const videoRef = useRef<VideoRef>(null);
   return (
     <>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Image source={{uri: profileUrl}} style={styles.profileIcon} />
+          <Image source={{uri: profileIcon}} style={styles.profileIcon} />
           <View>
-            <Text style={styles.userName}>Akash Dash</Text>
+            <Text style={styles.userName}>{username}</Text>
           </View>
-          <Text style={styles.timeAgo}>5 minutes ago</Text>
+          <Text style={styles.timeAgo}>{timeAgo}</Text>
         </View>
         <Text style={styles.title}>
-          Have a great day with my amazing client all the way from new york
+          {title}
         </Text>
         <View style={styles.tagContainer}>
-          <Tag color={`#FF9500`} text={`Confession`} />
+          <Tag color={tagColor} text={tagText} />
         </View>
       </View>
-      {/* <View style={styles.imageContainer}>
-        {media.images.map((image, index) => {
-          return (
-            <Image key={index} source={{uri: image}} style={styles.image} />
-          );
-        })}
-      </View>
-      <View>
-        {media.videos.map((video, index) => {
-          return (
-            <VideoComponent
-              key={index} 
-              video={video}
-            />
-          );
-        })}
-      </View> */}
       <View style={styles.swiperContainer}>
         <Swiper
           ref={swiperRef}
@@ -96,6 +76,46 @@ export const Post = (): React.JSX.Element => {
             </View>
           ))}
         </Swiper>
+        <View style={styles.bottomBar}>
+          <View style={styles.leftButton}>
+            <TouchableOpacity>
+              <Image
+                source={isLiked?require('../assets/color-arrow-up.png'):require('../assets/gray-arrow-up.png')}
+                style={styles.bottomIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.bottomCount}>{upvotes}</Text>
+            <TouchableOpacity>
+              <Image
+                source={require('../assets/gray-arrow-down.png')}
+                style={styles.bottomIcon}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.middleButton}>
+            <TouchableOpacity>
+              <Image
+                source={require('../assets/gray-message.png')}
+                style={styles.bottomIcon}
+              />
+              </TouchableOpacity>
+              <Text style={styles.bottomCount}>{comments}</Text>
+            </View>
+          <View style={styles.rightButton}>
+            <TouchableOpacity style={styles.bookMark}>
+              <Image
+                source={isBookmarked?require('../assets/color-archive-add.png'):require('../assets/gray-archive-add.png')}
+                style={styles.bottomIcon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Image
+                source={require('../assets/gray-share.png')}
+                style={styles.bottomIcon}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     </>
   );
@@ -139,7 +159,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 303,
-    marginRight: 5,
   },
   backgroundVideo: {
     width: '100%',
@@ -148,5 +167,36 @@ const styles = StyleSheet.create({
   swiper: {},
   swiperContainer: {
     height: 350,
+  },
+  bottomBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingBottom: 10,
+    paddingHorizontal: 15,
+  },
+  bottomIcon: {
+    width: 28,
+    height: 28,
+    marginRight: 5,
+  },
+  bottomCount: {
+    fontSize: 17,
+  },
+  leftButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  middleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight:15  
+  },
+  rightButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  bookMark:{
+    paddingRight:20
   }
 });
