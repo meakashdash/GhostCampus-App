@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   tagText: {
-    color: 'white',
-    fontFamily:'Montserrat-Medium',
+    color: '#000000',
+    fontFamily:'Montserrat-SemiBold',
     flexShrink: 1, 
     flexWrap: "wrap"
   },

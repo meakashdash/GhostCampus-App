@@ -146,9 +146,8 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
     fontFamily:'Montserrat-Medium',
     color:'#000000'
-  },
-  title: {
-    fontSize: 18,
+  },  	  title: {
+    fontSize: 20,
     marginBottom: 10,
     fontFamily:'Montserrat-Bold',
     color:"#000000"
@@ -186,6 +185,7 @@ const styles = StyleSheet.create({
   },
   bottomCount: {
     fontSize: 17,
+    fontFamily:'Montserrat-Regular'
   },
   leftButton: {
     flexDirection: 'row',
