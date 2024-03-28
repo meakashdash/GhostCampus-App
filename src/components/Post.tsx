@@ -17,25 +17,37 @@ interface PostProps {
   profileIcon: string;
   timeAgo: string;
   title: string;
-  tagColor:string,
-  tagText:string,
+  tagColor: string;
+  tagText: string;
   media: Media;
   upvotes: number;
   comments: number;
-  isLiked:boolean,
+  isLiked: boolean;
   isBookmarked: boolean;
 }
 
-interface Media{
-  images:string[],
-  videos:string[]
+interface Media {
+  images: string[];
+  videos: string[];
 }
- 
-export const Post = ({username,profileIcon,timeAgo,title,tagColor,tagText,media,upvotes,comments,isLiked,isBookmarked}:PostProps): React.JSX.Element => {
+
+export const Post = ({
+  username,
+  profileIcon,
+  timeAgo,
+  title,
+  tagColor,
+  tagText,
+  media,
+  upvotes,
+  comments,
+  isLiked,
+  isBookmarked,
+}: PostProps): React.JSX.Element => {
   const swiperRef = useRef(null);
   const videoRef = useRef<VideoRef>(null);
   return (
-    <>
+    <View style={styles.upperContainer}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Image source={{uri: profileIcon}} style={styles.profileIcon} />
@@ -44,9 +56,7 @@ export const Post = ({username,profileIcon,timeAgo,title,tagColor,tagText,media,
           </View>
           <Text style={styles.timeAgo}>{timeAgo}</Text>
         </View>
-        <Text style={styles.title}>
-          {title}
-        </Text>
+        <Text style={styles.title}>{title}</Text>
         <View style={styles.tagContainer}>
           <Tag color={tagColor} text={tagText} />
         </View>
@@ -57,30 +67,36 @@ export const Post = ({username,profileIcon,timeAgo,title,tagColor,tagText,media,
           loop={false}
           showsPagination={true}
           style={styles.swiper}>
-          {media.images.map((image, index) => (
-            <Image key={index} source={{uri: image}} style={styles.image} />
-          ))}
-          {media.videos.map((video, index) => (
-            <View>
-              <Video
-                key={index}
-                ref={videoRef}
-                source={{uri: video}}
-                paused={true}
-                muted={false}
-                repeat={false}
-                controls={true}
-                style={styles.backgroundVideo}
-                resizeMode="contain"
-              />
-            </View>
-          ))}
+          {media.images &&
+            media.images.map((image, index) => (
+              <Image key={index} source={{uri: image}} style={styles.image} />
+            ))}
+          {media.videos &&
+            media.videos.map((video, index) => (
+              <View>
+                <Video
+                  key={index}
+                  ref={videoRef}
+                  source={{uri: video}}
+                  paused={true}
+                  muted={false}
+                  repeat={false}
+                  controls={true}
+                  style={styles.backgroundVideo}
+                  resizeMode="contain"
+                />
+              </View>
+            ))}
         </Swiper>
         <View style={styles.bottomBar}>
           <View style={styles.leftButton}>
             <TouchableOpacity>
               <Image
-                source={isLiked?require('../../assets/color-arrow-up.png'):require('../../assets/gray-arrow-up.png')}
+                source={
+                  isLiked
+                    ? require('../../assets/color-arrow-up.png')
+                    : require('../../assets/gray-arrow-up.png')
+                }
                 style={styles.bottomIcon}
               />
             </TouchableOpacity>
@@ -98,13 +114,17 @@ export const Post = ({username,profileIcon,timeAgo,title,tagColor,tagText,media,
                 source={require('../../assets/gray-message.png')}
                 style={styles.bottomIcon}
               />
-              </TouchableOpacity>
-              <Text style={styles.bottomCount}>{comments}</Text>
-            </View>
+            </TouchableOpacity>
+            <Text style={styles.bottomCount}>{comments}</Text>
+          </View>
           <View style={styles.rightButton}>
             <TouchableOpacity style={styles.bookMark}>
               <Image
-                source={isBookmarked?require('../../assets/color-archive-add.png'):require('../../assets/gray-archive-add.png')}
+                source={
+                  isBookmarked
+                    ? require('../../assets/color-archive-add.png')
+                    : require('../../assets/gray-archive-add.png')
+                }
                 style={styles.bottomIcon}
               />
             </TouchableOpacity>
@@ -117,19 +137,26 @@ export const Post = ({username,profileIcon,timeAgo,title,tagColor,tagText,media,
           </View>
         </View>
       </View>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  upperContainer: {
+    backgroundColor: 'white',
+    padding: 8,
+    marginBottom: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#CCCCCC',
+  },
   container: {
     backgroundColor: 'white',
     padding: 8,
     marginBottom: 10,
   },
   userName: {
-    fontFamily:'Montserrat-SemiBold',
-    color:'#000000'
+    fontFamily: 'Montserrat-SemiBold',
+    color: '#000000',
   },
   header: {
     flexDirection: 'row',
@@ -144,13 +171,14 @@ const styles = StyleSheet.create({
   },
   timeAgo: {
     marginLeft: 'auto',
-    fontFamily:'Montserrat-Medium',
-    color:'#000000'
-  },  	  title: {
+    fontFamily: 'Montserrat-Medium',
+    color: '#000000',
+  },
+  title: {
     fontSize: 20,
     marginBottom: 10,
-    fontFamily:'Montserrat-Bold',
-    color:"#000000"
+    fontFamily: 'Montserrat-Bold',
+    color: '#000000',
   },
   tagContainer: {
     flexDirection: 'row',
@@ -175,7 +203,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: 10,
+    paddingBottom: 7,
     paddingHorizontal: 15,
   },
   bottomIcon: {
@@ -185,7 +213,7 @@ const styles = StyleSheet.create({
   },
   bottomCount: {
     fontSize: 17,
-    fontFamily:'Montserrat-Regular'
+    fontFamily: 'Montserrat-Regular',
   },
   leftButton: {
     flexDirection: 'row',
@@ -194,13 +222,13 @@ const styles = StyleSheet.create({
   middleButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingRight:15  
+    paddingRight: 15,
   },
   rightButton: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  bookMark:{
-    paddingRight:20
-  }
+  bookMark: {
+    paddingRight: 20,
+  },
 });
