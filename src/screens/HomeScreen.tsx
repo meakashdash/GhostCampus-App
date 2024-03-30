@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {StyleSheet, Text, ToastAndroid, View} from 'react-native';
+import {StyleSheet, ToastAndroid, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Post} from '../components/Post';
 import axios from 'axios';

@@ -14,7 +14,9 @@ import {Button} from '../components/Button';
 import {useNavigation,useIsFocused} from '@react-navigation/native';
 import axios from 'axios';
 import {baseUrl} from '../URL';
-import {getToken, removeToken, storeToken} from '../utils/storage';
+import {getToken, storeToken} from '../utils/storage';
+import { useSetRecoilState } from 'recoil';
+import { tokenState, userIdState } from '../context/userContext';
 
 export const Login = (): React.JSX.Element => {
   const [email, setEmail] = useState('');
@@ -22,6 +24,7 @@ export const Login = (): React.JSX.Element => {
   const navigation = useNavigation();
   const currentYear = new Date().getFullYear();
   const isFocused=useIsFocused();
+  const [setToken]=useSetRecoilState(tokenState);
 
   useEffect(() => {
     if(isFocused){
@@ -31,8 +34,7 @@ export const Login = (): React.JSX.Element => {
 
   const checkIfLoggedIn = async () => {
     try {
-      const token = await getToken();
-      console.log("1")
+      const token = getToken();
       console.log(token)
       if (token) {
         navigation.navigate('HomeScreen');
@@ -56,6 +58,7 @@ export const Login = (): React.JSX.Element => {
     JSON.stringify(response);
     if (response.data.statusCode === 200) {
       storeToken(response.data.token);
+      setToken(response.data.token);
       ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
       navigation.navigate('HomeScreen');
     }
