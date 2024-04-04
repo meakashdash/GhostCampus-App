@@ -5,7 +5,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -13,35 +13,37 @@ import {Login} from './src/screens/Login';
 import {Signup} from './src/screens/Signup';
 import {BottomTab} from './src/components/BottomTab';
 import {HomeScreen} from './src/screens/HomeScreen';
-import {RecoilRoot, useRecoilValue} from 'recoil';
-import { tokenState } from './src/context/userContext';
+import {RecoilRoot} from 'recoil';
+import { Splash } from './src/screens/Splash';
 
 const Stack = createNativeStackNavigator();
 
 function App(): React.JSX.Element {
-  const token=useRecoilValue(tokenState);
   return (
     <RecoilRoot>
       <NavigationContainer>
-        <BottomTab>
-          <Stack.Navigator initialRouteName={token ? 'HomeScreen' : 'Login'}>
+          <Stack.Navigator initialRouteName="Splash">
+            <Stack.Screen
+              name="Splash"
+              component={Splash}
+              options={{headerShown: false}}
+            />
             <Stack.Screen
               name="Login"
               component={Login}
-              options={{ headerShown: false }}
+              options={{headerShown: false}}
             />
             <Stack.Screen
               name="Signup"
               component={Signup}
-              options={{ headerShown: false }}
+              options={{headerShown: false}}
             />
             <Stack.Screen
               name="HomeScreen"
               component={HomeScreen}
-              options={{ headerShown: false }}
+              options={{headerShown: false}}
             />
           </Stack.Navigator>
-        </BottomTab>
       </NavigationContainer>
     </RecoilRoot>
   );
