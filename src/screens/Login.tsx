@@ -17,24 +17,29 @@ import {baseUrl} from '../URL';
 import {getToken, storeToken} from '../utils/storage';
 import { useSetRecoilState } from 'recoil';
 import { tokenState, userIdState } from '../context/userContext';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../App';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const Login = (): React.JSX.Element => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const navigation = useNavigation();
-  const currentYear = new Date().getFullYear();
+type LoginProps=NativeStackScreenProps<RootStackParamList,'Login'>
+
+export const Login = ({navigation}:LoginProps): React.JSX.Element => {
   const isFocused=useIsFocused();
-  const [setToken]=useSetRecoilState(tokenState);
-
   useEffect(() => {
     if(isFocused){
       checkIfLoggedIn();
     }
   },[isFocused]);
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  // const navigation = useNavigation();
+  const currentYear = new Date().getFullYear();
+  // const [setToken]=useSetRecoilState(tokenState);
+
   const checkIfLoggedIn = async () => {
     try {
-      const token = getToken();
+      const token = await AsyncStorage.getItem('token');
       console.log(token)
       if (token) {
         navigation.navigate('HomeScreen');
@@ -58,7 +63,7 @@ export const Login = (): React.JSX.Element => {
     JSON.stringify(response);
     if (response.data.statusCode === 200) {
       storeToken(response.data.token);
-      setToken(response.data.token);
+      // setToken(response.data.token);
       ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
       navigation.navigate('HomeScreen');
     }

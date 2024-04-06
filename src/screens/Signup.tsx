@@ -14,12 +14,16 @@ import {useNavigation,useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
 import {baseUrl} from '../URL';
 import {getToken, storeToken} from '../utils/storage';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../App';
 
-export const Signup = (): React.JSX.Element => {
+type SignupProps=NativeStackScreenProps<RootStackParamList,'Signup'>
+
+export const Signup = ({navigation}:SignupProps): React.JSX.Element => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
   const isFocused = useIsFocused();
   const currentYear = new Date().getFullYear();
 

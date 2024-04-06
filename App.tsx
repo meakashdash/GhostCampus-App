@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, {useEffect} from 'react';
+import * as React from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -15,35 +15,22 @@ import {BottomTab} from './src/components/BottomTab';
 import {HomeScreen} from './src/screens/HomeScreen';
 import {RecoilRoot} from 'recoil';
 import { Splash } from './src/screens/Splash';
+import InitialAuthStack from './src/InitialAuthStack';
 
-const Stack = createNativeStackNavigator();
+export type RootStackParamList = {
+  Splash:undefined
+  Login:undefined
+  Signup:undefined
+  HomeScreen:undefined
+};
 
-function App(): React.JSX.Element {
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+function App(){
   return (
     <RecoilRoot>
       <NavigationContainer>
-          <Stack.Navigator initialRouteName="Splash">
-            <Stack.Screen
-              name="Splash"
-              component={Splash}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="Login"
-              component={Login}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="Signup"
-              component={Signup}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="HomeScreen"
-              component={HomeScreen}
-              options={{headerShown: false}}
-            />
-          </Stack.Navigator>
+          <InitialAuthStack />
       </NavigationContainer>
     </RecoilRoot>
   );

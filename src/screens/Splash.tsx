@@ -1,42 +1,40 @@
-import {useNavigation, NavigationProp} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native'; 
 import React, {useEffect} from 'react';
 import SplashScreen from 'react-native-splash-screen';
-import {useRecoilValue} from 'recoil';
-import {tokenState} from '../context/userContext';
-import {getToken} from '../utils/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ActivityIndicator, View} from 'react-native';
+import {StackActions} from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../App';
 
-type RootStackParamList = {
-    HomeScreen: undefined;
-    Login: undefined;
-};
+type SplashProps={navigation: any;}
 
-export const Splash = () => {
-    const navigation = useNavigation();
-  //   const token = useRecoilValue(tokenState);
-
+export const Splash: React.FC<SplashProps> = ({navigation}:SplashProps) => {
   const checkToken = async () => {
-    const storedToken = await AsyncStorage.getItem('token');
-    
-    console.log(storedToken);
-    if (storedToken === null) {
-      navigation.navigate('Login');
-    } else {
-      navigation.navigate('HomeScreen');
+    try {
+      const storedToken = await AsyncStorage.getItem('token');
+      console.log(storedToken);
+
+      if (storedToken === null) {
+        console.log('Go to login');
+        // navigation.dispatch(StackActions.replace('Login',{user:'test'}));
+        navigation.replace('Login')
+      } else {
+        // navigation.dispatch(StackActions.replace('HomeScreen',{user:'test'}));
+        navigation.replace('HomeScreen')
+      }
+    } catch (error) {
+      console.error('Error checking token:', error);
+      // navigation.dispatch(StackActions.replace('Login'));
     }
   };
 
   useEffect(() => {
     SplashScreen.hide();
-    setTimeout(() => {
-        checkToken()
-    }, 2000);
+    // setTimeout(() => {
+      checkToken();
+    // }, 2000);
   }, []);
 
-  return (
-    <View>
-      <ActivityIndicator />
-    </View>
-  );
+  return <View>{/* <ActivityIndicator /> */}</View>;
 };
