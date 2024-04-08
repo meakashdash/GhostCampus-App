@@ -23,28 +23,7 @@ export const Signup = ({navigation}:SignupProps): React.JSX.Element => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  // const navigation = useNavigation();
-  const isFocused = useIsFocused();
   const currentYear = new Date().getFullYear();
-
-  useEffect(() => {
-    if(isFocused){
-      checkIfLoggedIn();
-    }
-  },[isFocused]);
-
-  const checkIfLoggedIn = async () => {
-    try {
-      const token = await getToken();
-      console.log("1")
-      console.log(token)
-      if (token) {
-        navigation.navigate('HomeScreen');
-      }
-    } catch (error) {
-      console.error('Error checking login status:', error);
-    }
-  };
 
   const handleEmailChange = (text: string) => {
     setEmail(text);
@@ -65,7 +44,7 @@ export const Signup = ({navigation}:SignupProps): React.JSX.Element => {
       JSON.stringify(response);
       if (response.data.statusCode === 200) {
         ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-        navigation.navigate('Login');
+        navigation.replace('Login');
       }else{
         ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
         setEmail('')
@@ -108,7 +87,7 @@ export const Signup = ({navigation}:SignupProps): React.JSX.Element => {
         />
         <Button title="Signup" onPress={handleSignUp} />
         <TouchableOpacity style={styles.login} onPress={handleChangeScreen}>
-          <Text>Already have an account? Login</Text>
+          <Text style={styles.loginText}>Already have an account? Login</Text>
         </TouchableOpacity>
         <Text style={styles.footer}>Copyright @{currentYear}</Text>
       </View>
@@ -130,8 +109,10 @@ const styles = StyleSheet.create({
   login: {
     marginBottom: 180,
   },
+  loginText:{
+    fontFamily:'Montserrat-Medium',
+  },
   footer: {
-    fontFamily:'Montserrat-Bold',
-    fontSize: 15,
+    fontFamily:'Montserrat-Medium',
   },
 });

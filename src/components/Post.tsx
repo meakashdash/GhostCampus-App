@@ -11,6 +11,7 @@ import {
 import Tag from './Tag';
 import Swiper from 'react-native-swiper';
 import Video, {VideoRef} from 'react-native-video';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface PostProps {
   username: string;
@@ -46,6 +47,11 @@ export const Post = ({
 }: PostProps): React.JSX.Element => {
   const swiperRef = useRef(null);
   const videoRef = useRef<VideoRef>(null);
+
+  const handleChange=async()=>{
+    AsyncStorage.removeItem('token')
+  }
+
   return (
     <View style={styles.upperContainer}>
       <View style={styles.container}>
@@ -128,7 +134,7 @@ export const Post = ({
                 style={styles.bottomIcon}
               />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleChange}>
               <Image
                 source={require('../../assets/gray-share.png')}
                 style={styles.bottomIcon}

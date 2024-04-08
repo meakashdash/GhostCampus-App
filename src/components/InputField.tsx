@@ -36,6 +36,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 25,
     paddingHorizontal: 10,
-    fontFamily: 'Alata-Regular',
+    fontFamily: 'Montserrat-Medium',
   },
 });

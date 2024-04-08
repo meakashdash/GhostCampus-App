@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, ToastAndroid, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Post} from '../components/Post';
 import axios from 'axios';
-import { baseUrl } from '../URL';
+import {baseUrl} from '../URL';
+import {BottomTab} from '../components/BottomTab';
 
 interface PostData {
   _id: string;
@@ -17,39 +18,40 @@ interface PostData {
   };
   likeCount: number;
   commentCount: number;
-  tagColor:string;
-  tagText:string;
-  timeAgo:string;
+  tagColor: string;
+  tagText: string;
+  timeAgo: string;
 }
 
-const sampleUrl='https://cdn-icons-png.flaticon.com/128/1144/1144760.png'
+const sampleUrl = 'https://cdn-icons-png.flaticon.com/128/1144/1144760.png';
 
 export const HomeScreen = (): React.JSX.Element => {
-  const [posts,setPosts]=useState<PostData[]>([])
-  useEffect(()=>{
+  const [posts, setPosts] = useState<PostData[]>([]);
+  useEffect(() => {
+    console.log('Homescreen');
     getAllPosts();
-  },[])
+  }, []);
 
-  const getAllPosts=async()=>{
+  const getAllPosts = async () => {
     try {
-      const response=await axios.get(`${baseUrl}/post`)
-      if(response.data.statusCode===200){
-        setPosts(response.data.postWithDetails)
-      }else{
+      const response = await axios.get(`${baseUrl}/post`);
+      if (response.data.statusCode === 200) {
+        setPosts(response.data.postWithDetails);
+      } else {
         ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw error;
     }
-  }
+  };
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        {posts.map((post)=>(
-          <Post 
+        {posts.map(post => (
+          <Post
             username={post.userName}
-            profileIcon={post.profilePhoto?post.profilePhoto:sampleUrl}
+            profileIcon={post.profilePhoto ? post.profilePhoto : sampleUrl}
             timeAgo={post.timeAgo}
             title={post.title}
             tagColor={post.tagColor}
@@ -59,7 +61,7 @@ export const HomeScreen = (): React.JSX.Element => {
             comments={post.commentCount}
             isLiked={true}
             isBookmarked={true}
-        /> 
+          />
         ))}
       </View>
     </SafeAreaView>
@@ -68,6 +70,6 @@ export const HomeScreen = (): React.JSX.Element => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff'
-  }
+    backgroundColor: '#ffffff',
+  },
 });

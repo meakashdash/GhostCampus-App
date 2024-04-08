@@ -1,40 +1,45 @@
-import {useNavigation} from '@react-navigation/native'; 
 import React, {useEffect} from 'react';
 import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ActivityIndicator, View} from 'react-native';
-import {StackActions} from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../App';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../../App';
+import axios from 'axios';
+import {baseUrl} from '../URL';
+import { useSetRecoilState } from 'recoil';
+import { tokenState, userIdState } from '../context/userContext';
 
-type SplashProps={navigation: any;}
+type SplashProps = NativeStackScreenProps<RootStackParamList,'Splash'>;
 
-export const Splash: React.FC<SplashProps> = ({navigation}:SplashProps) => {
+export const Splash: React.FC<SplashProps> = ({navigation}: SplashProps) => {
+  const setToken=useSetRecoilState(tokenState);
+  const setUserId=useSetRecoilState(userIdState)
   const checkToken = async () => {
     try {
       const storedToken = await AsyncStorage.getItem('token');
       console.log(storedToken);
-
-      if (storedToken === null) {
-        console.log('Go to login');
-        // navigation.dispatch(StackActions.replace('Login',{user:'test'}));
+      const response = await axios.get(`${baseUrl}/auth/token/user`, {
+        headers: {
+          Authorization: storedToken,
+        },
+      });
+      console.log(response)
+      if (response.data.statusCode != 200) {
         navigation.replace('Login')
-      } else {
-        // navigation.dispatch(StackActions.replace('HomeScreen',{user:'test'}));
-        navigation.replace('HomeScreen')
+      }else{
+        setToken(storedToken)
+        setUserId(response.data.data.userId)
+        navigation.replace('BottomTab')
       }
     } catch (error) {
       console.error('Error checking token:', error);
-      // navigation.dispatch(StackActions.replace('Login'));
     }
   };
 
   useEffect(() => {
     SplashScreen.hide();
-    // setTimeout(() => {
-      checkToken();
-    // }, 2000);
+    checkToken();
   }, []);
 
-  return <View>{/* <ActivityIndicator /> */}</View>;
+  return <View></View>;
 };

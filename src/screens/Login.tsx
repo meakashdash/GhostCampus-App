@@ -11,7 +11,6 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {InputField} from '../components/InputField';
 import {Button} from '../components/Button';
-import {useNavigation,useIsFocused} from '@react-navigation/native';
 import axios from 'axios';
 import {baseUrl} from '../URL';
 import {getToken, storeToken} from '../utils/storage';
@@ -19,35 +18,15 @@ import { useSetRecoilState } from 'recoil';
 import { tokenState, userIdState } from '../context/userContext';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type LoginProps=NativeStackScreenProps<RootStackParamList,'Login'>
 
 export const Login = ({navigation}:LoginProps): React.JSX.Element => {
-  const isFocused=useIsFocused();
-  useEffect(() => {
-    if(isFocused){
-      checkIfLoggedIn();
-    }
-  },[isFocused]);
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // const navigation = useNavigation();
   const currentYear = new Date().getFullYear();
-  // const [setToken]=useSetRecoilState(tokenState);
-
-  const checkIfLoggedIn = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      console.log(token)
-      if (token) {
-        navigation.navigate('HomeScreen');
-      }
-    } catch (error) {
-      console.error('Error checking login status:', error);
-    }
-  };
+  const setToken=useSetRecoilState(tokenState);
+  const setUserId=useSetRecoilState(userIdState);
 
   const handleEmailChange = (text: string) => {
     setEmail(text);
@@ -63,9 +42,10 @@ export const Login = ({navigation}:LoginProps): React.JSX.Element => {
     JSON.stringify(response);
     if (response.data.statusCode === 200) {
       storeToken(response.data.token);
-      // setToken(response.data.token);
+      setToken(response.data.token);
+      setUserId(response.data.userId);
       ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-      navigation.navigate('HomeScreen');
+      navigation.replace('BottomTab');
     }
     else{
       ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
@@ -97,7 +77,7 @@ export const Login = ({navigation}:LoginProps): React.JSX.Element => {
         />
         <Button title="Login" onPress={handleLogin} />
         <TouchableOpacity style={styles.signup} onPress={handleChangeScreen}>
-          <Text>Don't have any account? Create one</Text>
+          <Text style={styles.signupText}>Don't have any account? Create one</Text>
         </TouchableOpacity>
         <Text style={styles.footer}>Copyright @{currentYear}</Text>
       </View>
@@ -119,9 +99,10 @@ const styles = StyleSheet.create({
   signup: {
     marginBottom: 240,
   },
+  signupText:{
+    fontFamily: 'Montserrat-Medium',
+  },
   footer: {
-    fontFamily: 'Arata-Regular',
-    fontSize: 15,
-    fontWeight: 'bold',
+    fontFamily: 'Montserrat-Medium'
   },
 });
