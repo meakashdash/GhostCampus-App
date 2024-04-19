@@ -23,7 +23,7 @@ export const Splash: React.FC<SplashProps> = ({navigation}: SplashProps) => {
           Authorization: storedToken,
         },
       });
-      console.log(response)
+      console.log(response.data)
       if (response.data.statusCode != 200) {
         navigation.replace('Login')
       }else{

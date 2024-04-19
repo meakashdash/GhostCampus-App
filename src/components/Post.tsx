@@ -73,8 +73,8 @@ export const Post = ({
           loop={false}
           showsPagination={true}
           style={styles.swiper}>
-          {media.images &&
-            media.images.map((image, index) => (
+          {media?.images &&
+            media?.images?.map((image, index) => (
               <Image key={index} source={{uri: image}} style={styles.image} />
             ))}
           {media.videos &&
@@ -151,14 +151,14 @@ const styles = StyleSheet.create({
   upperContainer: {
     backgroundColor: 'white',
     padding: 8,
-    marginBottom: 10,
+    // marginBottom: 10,
     borderBottomWidth: 0.5,
     borderBottomColor: '#CCCCCC',
   },
   container: {
     backgroundColor: 'white',
     padding: 8,
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   userName: {
     fontFamily: 'Montserrat-SemiBold',
