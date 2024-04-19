@@ -11,6 +11,8 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {Post} from '../components/Post';
 import axios from 'axios';
 import {baseUrl} from '../URL';
+import { useRecoilState } from 'recoil';
+import { tokenState } from '../context/userContext';
 
 interface PostData {
   _id: string;
@@ -36,6 +38,7 @@ export const HomeScreen = (): React.JSX.Element => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [token,setToken]=useRecoilState(tokenState);
   useEffect(() => {
     console.log('Homescreen');
     getAllPosts();
@@ -61,6 +64,24 @@ export const HomeScreen = (): React.JSX.Element => {
       setLoading(false);
     }
   };
+
+  const getLikedPosts=async()=>{
+    try {
+      
+    } catch (error) {
+      console.log(error);
+      throw error
+    }
+  }
+
+  const getBookmarkedPosts=async()=>{
+    try {
+      
+    } catch (error) {
+      console.log(error);
+      throw error
+    }
+  }
    
   const renderItem = ({item}: any) => {
     return (
@@ -77,7 +98,7 @@ export const HomeScreen = (): React.JSX.Element => {
           comments={item.commentCount}
           isLiked={true}
           isBookmarked={true}
-        />
+        /> 
       </>
     );
   };

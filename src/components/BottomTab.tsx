@@ -2,6 +2,7 @@ import React from 'react';
 import {Image, StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import { AddPostStack, HomeScreenStack, NotificationStack, ProfileStack, TrendingStack } from '../InitialAuthStack';
+import TopBar from './TopBar';
 
 const Tab = createBottomTabNavigator();
 
@@ -62,7 +63,11 @@ export const BottomTab = (): React.JSX.Element => {
       <Tab.Screen
         name="HomeScreenStack"
         component={HomeScreenStack}
-        options={{headerShown: false}}
+        options={{
+          headerTitle: () => <TopBar />,
+          headerStyle: { height: 50, borderBottomWidth: 0 },
+          headerTitleContainerStyle: { paddingBottom: 20 }
+        }}
       />
       <Tab.Screen
         name="TrendingStack"
