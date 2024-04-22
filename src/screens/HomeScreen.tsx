@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState, memo} from 'react';
 import {
   StyleSheet,
   ToastAndroid,
@@ -12,7 +12,7 @@ import {Post} from '../components/Post';
 import axios from 'axios';
 import {baseUrl} from '../URL';
 import { useRecoilState } from 'recoil';
-import { tokenState } from '../context/userContext';
+import { bookmarkedPostsState, likedPostsState, tokenState } from '../context/userContext';
 
 interface PostData {
   _id: string;
@@ -39,8 +39,12 @@ export const HomeScreen = (): React.JSX.Element => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [token,setToken]=useRecoilState(tokenState);
+  const [likes,setLikes]=useRecoilState(likedPostsState);
+  const [bookMarks,setBookMarks]=useRecoilState(bookmarkedPostsState);
   useEffect(() => {
     console.log('Homescreen');
+    getLikedPosts();
+    getBookmarkedPosts();
     getAllPosts();
   }, [currentPage]);
 
@@ -67,7 +71,17 @@ export const HomeScreen = (): React.JSX.Element => {
 
   const getLikedPosts=async()=>{
     try {
-      
+      const response=await axios.get(`${baseUrl}/post/get-user-likes`,{
+        headers:{
+          Authorization:token
+        }
+      })
+      if(response.data.statusCode===200){
+        setLikes(response.data.likes)
+        console.log("liked state",likes);
+      }else{
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      }
     } catch (error) {
       console.log(error);
       throw error
@@ -76,7 +90,16 @@ export const HomeScreen = (): React.JSX.Element => {
 
   const getBookmarkedPosts=async()=>{
     try {
-      
+      const response=await axios.get(`${baseUrl}/post/get-user-bookmarks`,{
+        headers:{
+          Authorization:token
+        }
+      })
+      if(response.data.statusCode===200){
+        setBookMarks(response.data.bookmarks)
+      }else{
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      }
     } catch (error) {
       console.log(error);
       throw error
@@ -84,6 +107,8 @@ export const HomeScreen = (): React.JSX.Element => {
   }
    
   const renderItem = ({item}: any) => {
+    const isLiked = likes.includes(item._id);
+    const isBookmarked=bookMarks.includes(item._id);
     return (
       <>
         <Post
@@ -96,8 +121,8 @@ export const HomeScreen = (): React.JSX.Element => {
           media={item.media}
           upvotes={item.likeCount}
           comments={item.commentCount}
-          isLiked={true}
-          isBookmarked={true}
+          isLiked={isLiked}
+          isBookmarked={isBookmarked}
         /> 
       </>
     );
