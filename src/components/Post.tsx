@@ -7,11 +7,16 @@ import {
   View,
   ActivityIndicator,
   TouchableOpacity,
+  ToastAndroid,
 } from 'react-native';
 import Tag from './Tag';
 import Swiper from 'react-native-swiper';
 import Video, {VideoRef} from 'react-native-video';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { bookmarkedPostsState, likedPostsState, tokenState } from '../context/userContext';
+import axios from 'axios';
+import { baseUrl } from '../URL';
 
 interface PostProps {
   username: string;
@@ -25,6 +30,7 @@ interface PostProps {
   comments: number;
   isLiked: boolean;
   isBookmarked: boolean;
+  postId: string;
 }
 
 interface Media {
@@ -44,12 +50,73 @@ export const Post = ({
   comments,
   isLiked,
   isBookmarked,
+  postId
 }: PostProps): React.JSX.Element => {
   const swiperRef = useRef(null);
   const videoRef = useRef<VideoRef>(null);
+  const token=useRecoilValue(tokenState);
+  const setLikes = useSetRecoilState(likedPostsState);
+  const [upvoteCount,setUpvoteCount]=useState(upvotes);
+  const setBookmarks=useSetRecoilState(bookmarkedPostsState);
 
   const handleChange=async()=>{
     AsyncStorage.removeItem('token')
+  }
+
+  const handleLikeToggle=async()=>{
+    try {
+      const response=await axios.post(
+        `${baseUrl}/post/like`,
+        {postId},
+        {
+          headers:{
+            Authorization:token
+          }
+        }
+      )
+      if(response.data.statusCode===200){
+        if (response.data.message === 'Liked the post successfully') {
+          setLikes((prevLikes) => [...prevLikes, postId]);
+          setUpvoteCount((prevCount) => prevCount + 1);
+        } else if (response.data.message === 'Disliked the post successfully') {
+          setLikes((prevLikes) => prevLikes.filter((id) => id !== postId));
+          setUpvoteCount((prevCount) => prevCount - 1);
+        }
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      }else{
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      console.log(error);
+      throw error
+    }
+  }
+
+  const handleBookmarkToggle=async()=>{
+    try {
+      const response=await axios.post(
+        `${baseUrl}/post/bookmark`,
+        {postId},
+        {
+          headers:{
+            Authorization:token
+          }
+        }
+      )
+      if(response.data.statusCode===200){
+        if (response.data.message === 'Bookmarked the post successfully') {
+          setBookmarks((prevBookmarks) => [...prevBookmarks, postId]);
+        } else if (response.data.message === 'Unsave the post successfully') {
+          setBookmarks((prevBookmarks) => prevBookmarks.filter((id) => id !== postId));
+        }
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      }else{
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      console.log(error);
+      throw error
+    }
   }
 
   return (
@@ -96,7 +163,7 @@ export const Post = ({
         </Swiper>
         <View style={styles.bottomBar}>
           <View style={styles.leftButton}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleLikeToggle}>
               <Image
                 source={
                   isLiked
@@ -106,7 +173,7 @@ export const Post = ({
                 style={styles.bottomIcon}
               />
             </TouchableOpacity>
-            <Text style={styles.bottomCount}>{upvotes}</Text>
+            <Text style={styles.bottomCount}>{upvoteCount}</Text>
             <TouchableOpacity>
               <Image
                 source={require('../../assets/gray-arrow-down.png')}
@@ -124,7 +191,7 @@ export const Post = ({
             <Text style={styles.bottomCount}>{comments}</Text>
           </View>
           <View style={styles.rightButton}>
-            <TouchableOpacity style={styles.bookMark}>
+            <TouchableOpacity style={styles.bookMark} onPress={handleBookmarkToggle}>
               <Image
                 source={
                   isBookmarked

@@ -11,7 +11,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {Post} from '../components/Post';
 import axios from 'axios';
 import {baseUrl} from '../URL';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { bookmarkedPostsState, likedPostsState, tokenState } from '../context/userContext';
 
 interface PostData {
@@ -123,6 +123,7 @@ export const HomeScreen = (): React.JSX.Element => {
           comments={item.commentCount}
           isLiked={isLiked}
           isBookmarked={isBookmarked}
+          postId={item._id}
         /> 
       </>
     );
