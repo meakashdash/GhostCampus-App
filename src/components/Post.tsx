@@ -14,7 +14,7 @@ import Swiper from 'react-native-swiper';
 import Video, {VideoRef} from 'react-native-video';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { bookmarkedPostsState, likedPostsState, tokenState } from '../context/userContext';
+import { bookmarkedPostsState, downVotePostState, likedPostsState, tokenState } from '../context/userContext';
 import axios from 'axios';
 import { baseUrl } from '../URL';
 
@@ -30,6 +30,7 @@ interface PostProps {
   comments: number;
   isLiked: boolean;
   isBookmarked: boolean;
+  isDownvoted: boolean;
   postId: string;
 }
 
@@ -50,6 +51,7 @@ export const Post = ({
   comments,
   isLiked,
   isBookmarked,
+  isDownvoted,
   postId
 }: PostProps): React.JSX.Element => {
   const swiperRef = useRef(null);
@@ -58,6 +60,7 @@ export const Post = ({
   const setLikes = useSetRecoilState(likedPostsState);
   const [upvoteCount,setUpvoteCount]=useState(upvotes);
   const setBookmarks=useSetRecoilState(bookmarkedPostsState);
+  const setDownVotes=useSetRecoilState(downVotePostState);
 
   const handleChange=async()=>{
     AsyncStorage.removeItem('token')
@@ -74,10 +77,12 @@ export const Post = ({
           }
         }
       )
+      console.log(upvoteCount,postId);
       if(response.data.statusCode===200){
         if (response.data.message === 'Liked the post successfully') {
           setLikes((prevLikes) => [...prevLikes, postId]);
           setUpvoteCount((prevCount) => prevCount + 1);
+          setDownVotes((prevDownvotes) => prevDownvotes.filter((id) => id !== postId));
         } else if (response.data.message === 'Disliked the post successfully') {
           setLikes((prevLikes) => prevLikes.filter((id) => id !== postId));
           setUpvoteCount((prevCount) => prevCount - 1);
@@ -119,6 +124,37 @@ export const Post = ({
     }
   }
 
+  const handleDownvoteToggle=async()=>{
+    try {
+      const response=await axios.post(
+        `${baseUrl}/post/downvote`,
+        {postId},
+        {
+          headers:{
+            Authorization:token
+          }
+        }
+      )
+      console.log(postId);
+      if(response.data.statusCode===200){
+        if (response.data.message === 'Downvote the post successfully') {
+          setDownVotes((prevDownvotes) => [...prevDownvotes, postId]);
+          setLikes((prevLikes) => prevLikes.filter((id) => id !== postId));
+          if(upvoteCount!==0){
+            setUpvoteCount((prevCount) => prevCount - 1);
+          }
+        } else if (response.data.message === 'Remove downvote from the post successfully') {
+          setDownVotes((prevDownvotes) => prevDownvotes.filter((id) => id !== postId));
+        }
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      }else{
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      console.log(error);
+      throw error
+    }
+  }
   return (
     <View style={styles.upperContainer}>
       <View style={styles.container}>
@@ -173,10 +209,14 @@ export const Post = ({
                 style={styles.bottomIcon}
               />
             </TouchableOpacity>
-            <Text style={styles.bottomCount}>{upvoteCount}</Text>
-            <TouchableOpacity>
+            <Text style={styles.bottomCount}>{upvoteCount>=0?upvoteCount:0}</Text>
+            <TouchableOpacity  onPress={handleDownvoteToggle}>
               <Image
-                source={require('../../assets/gray-arrow-down.png')}
+                source={
+                  isDownvoted
+                    ? require('../../assets/color-arrow-down.png')
+                    : require('../../assets/gray-arrow-down.png')
+                }
                 style={styles.bottomIcon}
               />
             </TouchableOpacity>

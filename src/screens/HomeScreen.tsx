@@ -12,7 +12,7 @@ import {Post} from '../components/Post';
 import axios from 'axios';
 import {baseUrl} from '../URL';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { bookmarkedPostsState, likedPostsState, tokenState } from '../context/userContext';
+import { bookmarkedPostsState, downVotePostState, likedPostsState, tokenState } from '../context/userContext';
 
 interface PostData {
   _id: string;
@@ -41,10 +41,12 @@ export const HomeScreen = (): React.JSX.Element => {
   const [token,setToken]=useRecoilState(tokenState);
   const [likes,setLikes]=useRecoilState(likedPostsState);
   const [bookMarks,setBookMarks]=useRecoilState(bookmarkedPostsState);
+  const [downvotes,setDownVotes]=useRecoilState(downVotePostState);
   useEffect(() => {
     console.log('Homescreen');
     getLikedPosts();
     getBookmarkedPosts();
+    getDownvotedPosts();
     getAllPosts();
   }, [currentPage]);
 
@@ -88,6 +90,24 @@ export const HomeScreen = (): React.JSX.Element => {
     }
   }
 
+  const getDownvotedPosts=async()=>{
+    try {
+      const response=await axios.get(`${baseUrl}/post/get-user-downvote`,{
+        headers:{
+          Authorization:token
+        }
+      })
+      if(response.data.statusCode===200){
+        setDownVotes(response.data.downvotes)
+      }else{
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      console.log(error);
+      throw error
+    }
+  }
+
   const getBookmarkedPosts=async()=>{
     try {
       const response=await axios.get(`${baseUrl}/post/get-user-bookmarks`,{
@@ -109,6 +129,7 @@ export const HomeScreen = (): React.JSX.Element => {
   const renderItem = ({item}: any) => {
     const isLiked = likes.includes(item._id);
     const isBookmarked=bookMarks.includes(item._id);
+    const isDownvoted=downvotes.includes(item._id);
     return (
       <>
         <Post
@@ -123,6 +144,7 @@ export const HomeScreen = (): React.JSX.Element => {
           comments={item.commentCount}
           isLiked={isLiked}
           isBookmarked={isBookmarked}
+          isDownvoted={isDownvoted}
           postId={item._id}
         /> 
       </>

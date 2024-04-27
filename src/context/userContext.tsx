@@ -19,3 +19,8 @@ export const bookmarkedPostsState=atom<string[]>({
     key:'bookmarkedPostsState',
     default:[]
 })
+
+export const downVotePostState=atom<string[]>({
+    key:'downVotePostState',
+    default:[]
+})
