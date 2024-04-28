@@ -55,7 +55,6 @@ export const BottomTab = (): React.JSX.Element => {
           );
         },
         tabBarStyle: styles.tabBar,
-        header: () => <TopBar />,
       })}
       tabBarOptions={{
         showLabel: false,
@@ -65,8 +64,9 @@ export const BottomTab = (): React.JSX.Element => {
         name="HomeScreenStack"
         component={HomeScreenStack}
         options={{
-          // headerStyle: { height: 50, borderBottomWidth: 0 },
-          // headerTitleContainerStyle: { paddingBottom: 20 }
+          headerTitle: () => <TopBar />,
+          headerStyle: { height: 50, borderBottomWidth: 0 },
+          headerTitleContainerStyle: { paddingBottom: 20 }
         }}
       />
       <Tab.Screen
