@@ -1,5 +1,5 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React from 'react';
+import React,{useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {RootStackParamList} from '../App';
 import {BottomTab} from './components/BottomTab';
@@ -11,9 +11,13 @@ import {AddPost} from './screens/AddPost';
 import {Notification} from './screens/Notification';
 import {Profile} from './screens/Profile';
 import {Splash} from './screens/Splash';
+import CommentSheet from './components/CommentSheet';
+import { useRecoilState } from 'recoil';
+import { visibleComment } from './context/userContext';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const InitialAuthStack = () => {
+  const [viewComment,setViewComment]=useRecoilState(visibleComment);
   return (
     <>
       <Stack.Navigator initialRouteName="Splash">
@@ -38,6 +42,7 @@ const InitialAuthStack = () => {
           options={{headerShown: false}}
         />
       </Stack.Navigator>
+      {viewComment && <CommentSheet setViewComment={setViewComment} />}
     </>
   );
 };

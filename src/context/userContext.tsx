@@ -24,3 +24,13 @@ export const downVotePostState=atom<string[]>({
     key:'downVotePostState',
     default:[]
 })
+
+export const visibleComment=atom<boolean>({
+    key:'visibleComment',
+    default:false
+})
+
+export const checkCommentPostId=atom<string>({
+    key:'checkCommentPostId',
+    default:''
+})

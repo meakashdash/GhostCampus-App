@@ -13,8 +13,8 @@ import Tag from './Tag';
 import Swiper from 'react-native-swiper';
 import Video, {VideoRef} from 'react-native-video';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { bookmarkedPostsState, downVotePostState, likedPostsState, tokenState } from '../context/userContext';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { bookmarkedPostsState, checkCommentPostId, downVotePostState, likedPostsState, tokenState, visibleComment } from '../context/userContext';
 import axios from 'axios';
 import { baseUrl } from '../URL';
 
@@ -61,6 +61,8 @@ export const Post = ({
   const [upvoteCount,setUpvoteCount]=useState(upvotes);
   const setBookmarks=useSetRecoilState(bookmarkedPostsState);
   const setDownVotes=useSetRecoilState(downVotePostState);
+  const [viewComment,setViewComment]=useRecoilState(visibleComment);
+  const [postCommentId,setPostCommentId]=useRecoilState(checkCommentPostId);
 
   const handleChange=async()=>{
     AsyncStorage.removeItem('token')
@@ -155,6 +157,11 @@ export const Post = ({
       throw error
     }
   }
+
+  const openCommentSection=()=>{
+    setViewComment(true);
+    setPostCommentId(postId);
+  }
   return (
     <View style={styles.upperContainer}>
       <View style={styles.container}>
@@ -222,7 +229,7 @@ export const Post = ({
             </TouchableOpacity>
           </View>
           <View style={styles.middleButton}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={openCommentSection}>
               <Image
                 source={require('../../assets/gray-message.png')}
                 style={styles.bottomIcon}

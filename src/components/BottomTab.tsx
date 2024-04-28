@@ -55,6 +55,7 @@ export const BottomTab = (): React.JSX.Element => {
           );
         },
         tabBarStyle: styles.tabBar,
+        header: () => <TopBar />,
       })}
       tabBarOptions={{
         showLabel: false,
