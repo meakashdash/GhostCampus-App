@@ -2,6 +2,8 @@ import React,{useRef,useEffect} from 'react';
 import { StyleSheet, Text, View, Animated, Pressable } from 'react-native';
 import { useRecoilState } from 'recoil';
 import { checkCommentPostId } from '../context/userContext';
+import axios from 'axios'
+import { baseUrl } from '../URL';
 
 const CommentSheet = ({setViewComment}:any) => {
     const [postCommentId,setPostCommentId]=useRecoilState(checkCommentPostId);
@@ -36,8 +38,17 @@ const CommentSheet = ({setViewComment}:any) => {
 
     useEffect(()=>{
         console.log(postCommentId);
-        
+        getComments();
     },[postCommentId])
+
+    const getComments=async()=>{
+        try {
+            const response=await axios.get(`${baseUrl}/post/comment/${postCommentId}`);
+            console.log("comments",response.data.comments);
+        } catch (error) {
+            throw error;
+        }
+    }
 
     return (
         <Pressable onPress={closeModal} style={styles.backdrop}>
