@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     textComment:{
         fontSize:20,
         fontFamily:'Montserrat-SemiBold',
-        color:'black',
+        color:'white',
         paddingTop:15,
         paddingLeft:160,
         paddingBottom: 5,
