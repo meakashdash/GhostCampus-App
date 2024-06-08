@@ -3,10 +3,14 @@ import {Image, StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import { AddPostStack, HomeScreenStack, NotificationStack, ProfileStack, TrendingStack } from '../InitialAuthStack';
 import TopBar from './TopBar';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../App';
 
 const Tab = createBottomTabNavigator();
 
-export const BottomTab = (): React.JSX.Element => {
+type BottomTabProps=NativeStackScreenProps<RootStackParamList,'BottomTab'>
+
+export const BottomTab = ({navigation}:BottomTabProps): React.JSX.Element => {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -55,7 +59,7 @@ export const BottomTab = (): React.JSX.Element => {
           );
         },
         tabBarStyle: styles.tabBar,
-        header: () => <TopBar />,
+        header: () => <TopBar navigation={navigation}/>,
       })}
       tabBarOptions={{
         showLabel: false,
@@ -65,7 +69,7 @@ export const BottomTab = (): React.JSX.Element => {
         name="HomeScreenStack"
         component={HomeScreenStack}
         options={{
-          headerTitle: () => <TopBar />,
+          headerTitle: () => <TopBar navigation={navigation}/>,
           headerStyle: { height: 50, borderBottomWidth: 0 },
           headerTitleContainerStyle: { paddingBottom: 20 }
         }}

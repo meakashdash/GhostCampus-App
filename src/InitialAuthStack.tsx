@@ -14,6 +14,8 @@ import {Splash} from './screens/Splash';
 import CommentSheet from './components/CommentSheet';
 import { useRecoilState } from 'recoil';
 import { visibleComment } from './context/userContext';
+import TopBar from './components/TopBar';
+import MoodCalender from './screens/MoodCalender';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const InitialAuthStack = () => {
@@ -39,6 +41,11 @@ const InitialAuthStack = () => {
         <Stack.Screen
           name="BottomTab"
           component={BottomTab}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="MoodCalender"
+          component={MoodCalender}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

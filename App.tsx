@@ -17,6 +17,8 @@ export type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
   HomeScreen: undefined;
+  TopBar: undefined;
+  MoodCalender: undefined;
 };
 
 function App() {

@@ -1,10 +1,15 @@
 import React from 'react';
 import { Image, StyleSheet, View, TouchableOpacity } from 'react-native';
 import Calender from '../../assets/icons/Calender.tsx';
-import { Text } from 'react-native-svg';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../App.tsx';
 const sampleUrl = 'https://cdn-icons-png.flaticon.com/128/1144/1144760.png';
 
-const TopBar = () => {
+
+const TopBar = ({navigation}:any): React.JSX.Element => {
+  const handleNavigate=()=>{
+    navigation.navigate('MoodCalender')
+  }
   return (
     <View style={styles.container}>
       {/* <View>
@@ -19,10 +24,9 @@ const TopBar = () => {
             source={require('../../assets/LOGO.png')}
           />
         </TouchableOpacity> */}
-        <Text>Hello Akash</Text>
       </View>
       <View>
-        <TouchableOpacity style={styles.calender}>
+        <TouchableOpacity style={styles.calender} onPress={handleNavigate}>
           <Calender />
         </TouchableOpacity>
       </View>
