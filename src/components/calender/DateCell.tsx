@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { Modal, SafeAreaView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 
 interface DateCellProps {
+  // date: string;
   day: number | string;
+  // mood: string | null;
+  // isToday: boolean;
+  // isDisabled: boolean;
+  // onSelectDate: (date: string) => void;
+  // onSelectMood: (date: string, mood: string) => void;
 }
 
 const moodIcons = ['😊', '🤔', '😔', '😠', '🎉'];
@@ -14,6 +20,7 @@ const DateCell = ({ day }: DateCellProps): React.JSX.Element => {
   const handleShowModal = () => setModalOpen(true);
   const handleMoodSelect = (mood: string) => {
     setSelectMood(mood);
+
     setModalOpen(false);
   };
 
