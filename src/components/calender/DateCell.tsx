@@ -6,14 +6,14 @@ interface DateCellProps {
   day: number | string;
   // mood: string | null;
   // isToday: boolean;
-  // isDisabled: boolean;
+  isDisabled: boolean;
   // onSelectDate: (date: string) => void;
   // onSelectMood: (date: string, mood: string) => void;
 }
 
 const moodIcons = ['😊', '🤔', '😔', '😠', '🎉'];
 
-const DateCell = ({ day }: DateCellProps): React.JSX.Element => {
+const DateCell = ({ day, isDisabled }: DateCellProps): React.JSX.Element => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectMood, setSelectMood] = useState<string | null>(null);
 
@@ -30,13 +30,13 @@ const DateCell = ({ day }: DateCellProps): React.JSX.Element => {
 
   return (
     <SafeAreaView>
-      <TouchableOpacity style={styles.dayContainer} onPress={handleShowModal}>
-        {selectMood ? <Text style={styles.moodStyle}>{selectMood}</Text> : <Text style={styles.dayText}>{day}</Text>}
+      <TouchableOpacity style={[styles.dayContainer,isDisabled && styles.disabledContainer]} onPress={handleShowModal}>
+        {selectMood ? <Text style={styles.moodStyle}>{selectMood}</Text> : <Text style={[styles.dayText,isDisabled && styles.disabledText]}>{day}</Text>}
       </TouchableOpacity>
       <Modal
         animationType="slide"
         transparent={true}
-        visible={isModalOpen}
+        visible={isModalOpen && !isDisabled}
         onRequestClose={() => setModalOpen(false)}
       >
         <TouchableWithoutFeedback onPress={handleCloseModal}>
@@ -59,18 +59,24 @@ const DateCell = ({ day }: DateCellProps): React.JSX.Element => {
 
 const styles = StyleSheet.create({
   dayContainer: {
-    height: 58,
-    width: 58,
-    borderRadius: 29,
+    height: 50,
+    width: 50,
+    borderRadius: 25,
     borderWidth: 2.5,
     borderColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
   },
+  disabledContainer:{
+    borderColor: '#5D5D6D',
+  },
   dayText: {
     color: '#FFFFFF',
     fontSize: 24,
     fontFamily: 'Monsterrat-Bold'
+  },
+  disabledText:{
+    color: '#5D5D6D',
   },
   moodStyle: {
     fontSize: 24
