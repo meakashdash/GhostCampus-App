@@ -1,37 +1,64 @@
-import React, { useState } from 'react';
-import { Modal, SafeAreaView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import React, {useState} from 'react';
+import {
+  Modal,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
+import Happy from '../../../assets/icons/moods/Happy';
+import Sad from '../../../assets/icons/moods/Sad';
+import Angry from '../../../assets/icons/moods/Angry';
+import Celebrate from '../../../assets/icons/moods/Celebrate';
+import Confused from '../../../assets/icons/moods/Confused';
 
 interface DateCellProps {
-  // date: string;
   day: number | string;
-  // mood: string | null;
   // isToday: boolean;
   isDisabled: boolean;
-  // onSelectDate: (date: string) => void;
-  // onSelectMood: (date: string, mood: string) => void;
 }
 
-const moodIcons = ['😊', '🤔', '😔', '😠', '🎉'];
+const moodEmojis = [
+  {name: 'happy', component: Happy},
+  {name: 'confused', component: Confused},
+  {name: 'sad', component: Sad},
+  {name: 'angry', component: Angry},
+  {name: 'celebration', component: Celebrate},
+];
 
-const DateCell = ({ day, isDisabled }: DateCellProps): React.JSX.Element => {
+const DateCell = ({day, isDisabled}: DateCellProps): React.JSX.Element => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectMood, setSelectMood] = useState<string | null>(null);
 
   const handleShowModal = () => setModalOpen(true);
   const handleMoodSelect = (mood: string) => {
     setSelectMood(mood);
-
     setModalOpen(false);
   };
 
-  const handleCloseModal=()=>{
+  const handleCloseModal = () => {
     setModalOpen(false);
-  }
+  };
+
+  const MoodEmoji = selectMood
+    ? moodEmojis.find(emoji => emoji.name === selectMood)?.component
+    : null;
 
   return (
     <SafeAreaView>
-      <TouchableOpacity style={[styles.dayContainer,isDisabled && styles.disabledContainer]} onPress={handleShowModal}>
-        {selectMood ? <Text style={styles.moodStyle}>{selectMood}</Text> : <Text style={[styles.dayText,isDisabled && styles.disabledText]}>{day}</Text>}
+      <TouchableOpacity
+        style={[styles.dayContainer, isDisabled && styles.disabledContainer]}
+        onPress={handleShowModal}
+        activeOpacity={0.8}>
+        {MoodEmoji ? (
+          <MoodEmoji width={50} height={40} />
+        ) : (
+          <Text style={[styles.dayText, isDisabled && styles.disabledText]}>
+            {day}
+          </Text>
+        )}
       </TouchableOpacity>
       <Modal
         animationType="slide"
@@ -40,22 +67,25 @@ const DateCell = ({ day, isDisabled }: DateCellProps): React.JSX.Element => {
         onRequestClose={() => setModalOpen(false)}
       >
         <TouchableWithoutFeedback onPress={handleCloseModal}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <View style={styles.moodContainer}>
-              {moodIcons.map((mood) => (
-                <TouchableOpacity key={mood} onPress={() => handleMoodSelect(mood)}>
-                  <Text style={styles.moodIcon}>{mood}</Text>
-                </TouchableOpacity>
-              ))}
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <View style={styles.moodContainer}>
+                {moodEmojis.map(emoji => (
+                  <TouchableOpacity
+                    key={emoji.name}
+                    onPress={() => handleMoodSelect(emoji.name)}
+                    style={styles.moodButton}>
+                    <emoji.component width={50} height={50} />
+                  </TouchableOpacity>
+                ))}
+              </View>
             </View>
           </View>
-        </View>
         </TouchableWithoutFeedback>
       </Modal>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   dayContainer: {
@@ -66,20 +96,25 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 7,
+    marginBottom: 5,
   },
-  disabledContainer:{
+  disabledContainer: {
     borderColor: '#5D5D6D',
   },
   dayText: {
     color: '#FFFFFF',
     fontSize: 24,
-    fontFamily: 'Monsterrat-Bold'
+    fontFamily: 'Monsterrat-Bold',
   },
-  disabledText:{
+  disabledText: {
     color: '#5D5D6D',
   },
   moodStyle: {
-    fontSize: 24
+    fontSize: 35,
+  },
+  moodButton: {
+    margin: 10,
   },
   modalContainer: {
     flex: 1,

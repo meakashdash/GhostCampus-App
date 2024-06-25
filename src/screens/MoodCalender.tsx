@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     borderRadius:18
   },
   calender: {
-    paddingTop:100
+    paddingTop:20
   },
 });
 
