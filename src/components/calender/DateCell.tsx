@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Modal,
   SafeAreaView,
@@ -18,14 +18,21 @@ import axios from 'axios'
 import { baseUrl } from '../../URL';
 import { useRecoilValue } from 'recoil';
 import { tokenState } from '../../context/userContext';
-import { months } from 'moment';
+
+interface MoodProps{
+  _id:string,
+  date:string,
+  mood:string,
+  userId:string
+}
 
 interface DateCellProps {
   day: number | string;
-  // isToday: boolean;
+  isToday?: boolean;
   isDisabled: boolean;
   month: number | string;
   year: number | string;
+  moods?:Array<MoodProps>;
 }
 
 const moodEmojis = [
@@ -36,31 +43,40 @@ const moodEmojis = [
   {name: 'celebration', component: Celebrate},
 ];
 
-const DateCell = ({day, isDisabled, month, year}: DateCellProps): React.JSX.Element => {
+const DateCell = ({day, isDisabled, month, year, moods, isToday}: DateCellProps): React.JSX.Element => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectMood, setSelectMood] = useState<string | null>(null);
   const token=useRecoilValue(tokenState);
-
+  useEffect(() => {
+    const currentMood = moods?.find(mood => mood.date === `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
+    if (currentMood) {
+      setSelectMood(currentMood.mood);
+    }
+  }, [moods]);
   const handleShowModal = () => setModalOpen(true);
   const handleMoodSelect = async(mood: string) => {
-    const moodItem={
-      mood:mood,
-      date:`${year}-0${month}-${day}`
-    }
-    console.log(moodItem);
-    const response=await axios.post(`${baseUrl}/mood/create-mood`,moodItem,{
-      headers:{
-        Authorization:token
+    try {
+      const moodItem={
+        mood:mood,
+        date:`${year}-0${month}-${day}`
       }
-    });
-    console.log("response",response.data);
-    if(response.data.statusCode===200){
-      setSelectMood(mood);
-      ToastAndroid.show(response.data.message,ToastAndroid.SHORT)
-    }else{
-      ToastAndroid.show(response.data.message,ToastAndroid.SHORT)
+      const response=await axios.post(`${baseUrl}/mood/create-mood`,moodItem,{
+        headers:{
+          Authorization:token
+        }
+      });
+      if(response.data.statusCode===200){
+        setSelectMood(mood);
+        ToastAndroid.show(response.data.message,ToastAndroid.SHORT)
+      }else{
+        ToastAndroid.show(response.data.message,ToastAndroid.SHORT)
+      }
+      setModalOpen(false);
+    } catch (error) {
+      setModalOpen(false);
+      console.log(error);
+      throw error;
     }
-    setModalOpen(false);
   };
 
   const handleCloseModal = () => {
@@ -74,13 +90,13 @@ const DateCell = ({day, isDisabled, month, year}: DateCellProps): React.JSX.Elem
   return (
     <SafeAreaView>
       <TouchableOpacity
-        style={[styles.dayContainer, isDisabled && styles.disabledContainer]}
+        style={[styles.dayContainer, isDisabled && styles.disabledContainer, isToday && styles.todayContainer]}
         onPress={handleShowModal}
         activeOpacity={0.8}>
         {MoodEmoji ? (
           <MoodEmoji width={50} height={40} />
         ) : (
-          <Text style={[styles.dayText, isDisabled && styles.disabledText]}>
+          <Text style={[styles.dayText, isDisabled && styles.disabledText, isToday && styles.todayText]}>
             {day}
           </Text>
         )}
@@ -180,6 +196,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  todayContainer:{
+    backgroundColor: '#FFFFFF',
+    borderColor: '#FFFFFF',
+  },
+  todayText:{
+    color: '#000000',
+  }
 });
 
 export default DateCell;
