@@ -10,6 +10,7 @@ import DateCell from './DateCell';
 import LeftSlide from '../../../assets/icons/LeftSlide';
 import RightSlideInactive from '../../../assets/icons/RightSlideInactive';
 import RightSlideActive from '../../../assets/icons/RightSlideActive';
+import axios from 'axios'
 
 const Calender = (): React.JSX.Element => {
   const [date, setDate] = useState(new Date());
@@ -56,6 +57,8 @@ const Calender = (): React.JSX.Element => {
         <DateCell
           key={lastMonthDate - i + 1}
           day={lastMonthDate - i + 1}
+          month={month+1}
+          year={year}
           isDisabled={true}
         />,
       );
@@ -69,6 +72,8 @@ const Calender = (): React.JSX.Element => {
         <DateCell
           key={i - dayend + 1}
           day={i - dayend + 1}
+          month={month+1}
+          year={year}
           isDisabled={true}
         />,
       );
@@ -78,11 +83,10 @@ const Calender = (): React.JSX.Element => {
   const renderCurrentDateCells = () => {
     let activeCells = [];
     for (let i = 1; i <= lastdate; i++) {
-      activeCells.push(<DateCell key={i} day={i} isDisabled={false} />);
+      activeCells.push(<DateCell key={i} day={i} month={month+1} year={year} isDisabled={false} />);
     }
     return activeCells;
   };
-  console.log(currentMonth, month);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>

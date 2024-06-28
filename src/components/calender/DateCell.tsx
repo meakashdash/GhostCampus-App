@@ -7,17 +7,25 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  ToastAndroid
 } from 'react-native';
 import Happy from '../../../assets/icons/moods/Happy';
 import Sad from '../../../assets/icons/moods/Sad';
 import Angry from '../../../assets/icons/moods/Angry';
 import Celebrate from '../../../assets/icons/moods/Celebrate';
 import Confused from '../../../assets/icons/moods/Confused';
+import axios from 'axios'
+import { baseUrl } from '../../URL';
+import { useRecoilValue } from 'recoil';
+import { tokenState } from '../../context/userContext';
+import { months } from 'moment';
 
 interface DateCellProps {
   day: number | string;
   // isToday: boolean;
   isDisabled: boolean;
+  month: number | string;
+  year: number | string;
 }
 
 const moodEmojis = [
@@ -28,13 +36,30 @@ const moodEmojis = [
   {name: 'celebration', component: Celebrate},
 ];
 
-const DateCell = ({day, isDisabled}: DateCellProps): React.JSX.Element => {
+const DateCell = ({day, isDisabled, month, year}: DateCellProps): React.JSX.Element => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectMood, setSelectMood] = useState<string | null>(null);
+  const token=useRecoilValue(tokenState);
 
   const handleShowModal = () => setModalOpen(true);
-  const handleMoodSelect = (mood: string) => {
-    setSelectMood(mood);
+  const handleMoodSelect = async(mood: string) => {
+    const moodItem={
+      mood:mood,
+      date:`${year}-0${month}-${day}`
+    }
+    console.log(moodItem);
+    const response=await axios.post(`${baseUrl}/mood/create-mood`,moodItem,{
+      headers:{
+        Authorization:token
+      }
+    });
+    console.log("response",response.data);
+    if(response.data.statusCode===200){
+      setSelectMood(mood);
+      ToastAndroid.show(response.data.message,ToastAndroid.SHORT)
+    }else{
+      ToastAndroid.show(response.data.message,ToastAndroid.SHORT)
+    }
     setModalOpen(false);
   };
 

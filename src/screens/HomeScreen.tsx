@@ -7,13 +7,11 @@ import {
   ActivityIndicator,
   Text,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {Post} from '../components/Post';
 import axios from 'axios';
 import {baseUrl} from '../URL';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { bookmarkedPostsState, downVotePostState, likedPostsState, tokenState } from '../context/userContext';
-import CommentSheet from '../components/CommentSheet';
 
 interface PostData {
   _id: string;

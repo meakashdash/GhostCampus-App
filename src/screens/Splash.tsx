@@ -18,6 +18,7 @@ export const Splash: React.FC<SplashProps> = ({navigation}: SplashProps) => {
     try {
       const storedToken = await AsyncStorage.getItem('token');
       console.log(storedToken);
+      console.log(`${baseUrl}/auth/token/user`);
       const response = await axios.get(`${baseUrl}/auth/token/user`, {
         headers: {
           Authorization: storedToken,
