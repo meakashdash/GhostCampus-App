@@ -5,6 +5,16 @@ import { AddPostStack, HomeScreenStack, NotificationStack, ProfileStack, Trendin
 import TopBar from './TopBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
+import HomeColor from '../../assets/icons/bottombar/HomeColor';
+import HomeGray from '../../assets/icons/bottombar/HomeGray';
+import ProfileColor from '../../assets/icons/bottombar/ProfileColor';
+import ProfileGray from '../../assets/icons/bottombar/ProfileGray';
+import MarketColor from '../../assets/icons/bottombar/MarketColor';
+import MarketGray from '../../assets/icons/bottombar/MarketGray';
+import NotificationColor from '../../assets/icons/bottombar/NotificationColor';
+import NotificationGray from '../../assets/icons/bottombar/NotificationGray';
+import AddColor from '../../assets/icons/bottombar/AddColor';
+import AddGray from '../../assets/icons/bottombar/AddGray';
 
 const Tab = createBottomTabNavigator();
 
@@ -15,48 +25,30 @@ export const BottomTab = ({navigation}:BottomTabProps): React.JSX.Element => {
     <Tab.Navigator
       screenOptions={({route}) => ({
         tabBarIcon: ({focused}: {focused: boolean}) => {
-          let iconSource;
+          let IconComponent:React.ComponentType;
 
-          if (route.name === 'HomeScreenStack') {
-            iconSource = focused
-              ? require('../../assets/color-home-icon.png')
-              : require('../../assets/gray-home-icon.png');
+          switch (route.name) {
+            case 'HomeScreenStack':
+              IconComponent = focused ? HomeColor : HomeGray;
+              break;
+            case 'ProfileStack':
+              IconComponent = focused ? ProfileColor : ProfileGray;
+              break;
+            case 'TrendingStack':
+              IconComponent = focused ? MarketColor : MarketGray;
+              break;
+            case 'NotificationStack':
+              IconComponent = focused ? NotificationColor : NotificationGray;
+              break;
+            case 'AddPostStack':
+              IconComponent = focused ? AddColor : AddGray;
+              break;
+            default:
+              IconComponent = () => null;
+              break;
           }
 
-          if (route.name === 'ProfileStack') {
-            iconSource = focused
-              ? require('../../assets/color-profile-circle.png')
-              : require('../../assets/gray-profile-circle.png');
-          }
-
-          if (route.name === 'TrendingStack') {
-            iconSource = focused
-              ? require('../../assets/color-trending-icon.png')
-              : require('../../assets/gray-trending-icon.png');
-          }
-
-          if (route.name === 'NotificationStack') {
-            iconSource = focused
-              ? require('../../assets/color-notification-icon.png')
-              : require('../../assets/gray-notification-icon.png');
-          }
-
-          if (route.name === 'AddPostStack') {
-            iconSource = focused
-              ? require('../../assets/add-post-icon.png')
-              : require('../../assets/add-post-icon.png');
-          }
-
-          return (
-            <Image
-              source={iconSource}
-              style={[
-                styles.icon,
-                route.name === 'AddPostStack' && styles.largeIcon,
-              ]}
-              resizeMode="contain"
-            />
-          );
+          return <IconComponent />;
         },
         tabBarStyle: styles.tabBar,
         header: () => <TopBar navigation={navigation}/>,
@@ -89,8 +81,8 @@ export const BottomTab = ({navigation}:BottomTabProps): React.JSX.Element => {
         component={NotificationStack}
         options={{
           headerShown: false,
-          tabBarBadge: 3,
-          tabBarBadgeStyle: {backgroundColor: '#b20000'},
+          // tabBarBadge: 3,
+          // tabBarBadgeStyle: {backgroundColor: '#F4B0B0'},
         }}
       />
       <Tab.Screen
@@ -124,6 +116,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     elevation: 0,
-    backgroundColor: 'white',
+    backgroundColor: '#252525',
   },
 });

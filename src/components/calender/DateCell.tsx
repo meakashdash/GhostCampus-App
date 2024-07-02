@@ -58,8 +58,9 @@ const DateCell = ({day, isDisabled, month, year, moods, isToday}: DateCellProps)
     try {
       const moodItem={
         mood:mood,
-        date:`${year}-0${month}-${day}`
+        date:`${year}-${month}-${day}`
       }
+      console.log(moodItem);
       const response=await axios.post(`${baseUrl}/mood/create-mood`,moodItem,{
         headers:{
           Authorization:token
