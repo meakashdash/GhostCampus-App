@@ -97,7 +97,7 @@ export const BottomTab = ({navigation}:BottomTabProps): React.JSX.Element => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'black',
   },
   icon: {
     width: 40,

@@ -130,7 +130,7 @@ export const HomeScreen = (): React.JSX.Element => {
     const isBookmarked=bookMarks.includes(item._id);
     const isDownvoted=downvotes.includes(item._id);
     return (
-      <>
+      <View style={{ flex: 1, backgroundColor: 'black' }}>
         <Post
           username={item.userName}
           profileIcon={item.profilePhoto ? item.profilePhoto : sampleUrl}
@@ -146,7 +146,7 @@ export const HomeScreen = (): React.JSX.Element => {
           isDownvoted={isDownvoted}
           postId={item._id}
         /> 
-      </>
+      </View>
     );
   };
 
@@ -193,14 +193,16 @@ export const HomeScreen = (): React.JSX.Element => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#000000',
   },
   loaderStyle: {
     marginVertical: 16,
     alignItems: 'center',
   },
   itemSeparator:{
-    marginVertical:4
+    height: 7,
+    marginVertical: 0,
+    backgroundColor: 'black',
   },
   error:{
     color: 'red',

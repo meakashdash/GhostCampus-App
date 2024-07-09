@@ -14,6 +14,6 @@ export const Notification=():React.JSX.Element=>{
 
 const styles=StyleSheet.create({
     container:{
-        backgroundColor:"#ffffff"
+        backgroundColor:"#000000"
     }
 })

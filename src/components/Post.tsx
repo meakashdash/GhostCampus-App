@@ -54,6 +54,7 @@ export const Post = ({
   isDownvoted,
   postId
 }: PostProps): React.JSX.Element => {
+  const hasMedia = media && (media.images?.length > 0 || media.videos?.length > 0);
   const swiperRef = useRef(null);
   const videoRef = useRef<VideoRef>(null);
   const token=useRecoilValue(tokenState);
@@ -177,8 +178,8 @@ export const Post = ({
           <Tag color={tagColor} text={tagText} />
         </View>
       </View>
-      <View style={styles.swiperContainer}>
-        <Swiper
+      <View style={hasMedia?styles.swiperContainer:{}}>
+        {hasMedia && (<Swiper
           ref={swiperRef}
           loop={false}
           showsPagination={true}
@@ -203,7 +204,7 @@ export const Post = ({
                 />
               </View>
             ))}
-        </Swiper>
+        </Swiper>)}
         <View style={styles.bottomBar}>
           <View style={styles.leftButton}>
             <TouchableOpacity onPress={handleLikeToggle}>
@@ -263,20 +264,23 @@ export const Post = ({
 
 const styles = StyleSheet.create({
   upperContainer: {
-    backgroundColor: 'white',
+    backgroundColor: '#252526',
     padding: 8,
-    // marginBottom: 10,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#CCCCCC',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderRadius:18,
+    borderColor: '#000000',
   },
   container: {
-    backgroundColor: 'white',
+    backgroundColor: '#252526',
     padding: 8,
     // marginBottom: 10,
   },
   userName: {
     fontFamily: 'Montserrat-SemiBold',
-    color: '#000000',
+    color: '#ffffff',
   },
   header: {
     flexDirection: 'row',
@@ -292,13 +296,13 @@ const styles = StyleSheet.create({
   timeAgo: {
     marginLeft: 'auto',
     fontFamily: 'Montserrat-Medium',
-    color: '#000000',
+    color: '#ffffff',
   },
   title: {
     fontSize: 20,
     marginBottom: 10,
     fontFamily: 'Montserrat-Bold',
-    color: '#000000',
+    color: '#ffffff',
   },
   tagContainer: {
     flexDirection: 'row',
@@ -324,7 +328,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingBottom: 7,
-    paddingHorizontal: 15,
+    paddingHorizontal: 15
   },
   bottomIcon: {
     width: 28,
@@ -334,6 +338,7 @@ const styles = StyleSheet.create({
   bottomCount: {
     fontSize: 17,
     fontFamily: 'Montserrat-Regular',
+    color: '#ffffff',
   },
   leftButton: {
     flexDirection: 'row',
