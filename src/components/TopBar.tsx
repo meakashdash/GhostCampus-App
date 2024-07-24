@@ -27,7 +27,7 @@ const TopBar = ({navigation}:any): React.JSX.Element => {
       </View>
       <View>
         <TouchableOpacity style={styles.calender} onPress={handleNavigate}>
-          <Calender />
+          {/* <Calender /> */}
         </TouchableOpacity>
       </View>
     </View>

@@ -8,13 +8,11 @@ import {Trending} from './screens/Trending';
 import {Login} from './screens/Login';
 import {Signup} from './screens/Signup';
 import {AddPost} from './screens/AddPost';
-import {Notification} from './screens/Notification';
 import {Profile} from './screens/Profile';
 import {Splash} from './screens/Splash';
 import CommentSheet from './components/CommentSheet';
 import { useRecoilState } from 'recoil';
 import { visibleComment } from './context/userContext';
-import TopBar from './components/TopBar';
 import MoodCalender from './screens/MoodCalender';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -93,16 +91,16 @@ export const AddPostStack = () => {
   );
 };
 
-export const NotificationScreenNavigation = createNativeStackNavigator();
-export const NotificationStack = () => {
+export const MoodCalenderScreenNavigation = createNativeStackNavigator();
+export const MoodCalenderStack = () => {
   return (
-    <NotificationScreenNavigation.Navigator>
-      <NotificationScreenNavigation.Screen
-        name="Notification"
-        component={Notification}
+    <MoodCalenderScreenNavigation.Navigator>
+      <MoodCalenderScreenNavigation.Screen
+        name="MoodCalender"
+        component={MoodCalender}
         options={{headerShown: false}}
       />
-    </NotificationScreenNavigation.Navigator>
+    </MoodCalenderScreenNavigation.Navigator>
   );
 };
 

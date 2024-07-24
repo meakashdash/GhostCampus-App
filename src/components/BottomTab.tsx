@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image, StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import { AddPostStack, HomeScreenStack, NotificationStack, ProfileStack, TrendingStack } from '../InitialAuthStack';
+import { AddPostStack, HomeScreenStack, MoodCalenderStack, ProfileStack, TrendingStack } from '../InitialAuthStack';
 import TopBar from './TopBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
@@ -11,10 +11,10 @@ import ProfileColor from '../../assets/icons/bottombar/ProfileColor';
 import ProfileGray from '../../assets/icons/bottombar/ProfileGray';
 import MarketColor from '../../assets/icons/bottombar/MarketColor';
 import MarketGray from '../../assets/icons/bottombar/MarketGray';
-import NotificationColor from '../../assets/icons/bottombar/NotificationColor';
-import NotificationGray from '../../assets/icons/bottombar/NotificationGray';
 import AddColor from '../../assets/icons/bottombar/AddColor';
 import AddGray from '../../assets/icons/bottombar/AddGray';
+import MoodColor from '../../assets/icons/bottombar/MoodColor';
+import MoodGray from '../../assets/icons/bottombar/MoodGray';
 
 const Tab = createBottomTabNavigator();
 
@@ -37,8 +37,8 @@ export const BottomTab = ({navigation}:BottomTabProps): React.JSX.Element => {
             case 'TrendingStack':
               IconComponent = focused ? MarketColor : MarketGray;
               break;
-            case 'NotificationStack':
-              IconComponent = focused ? NotificationColor : NotificationGray;
+            case 'MoodCalenderStack':
+              IconComponent = focused ? MoodColor : MoodGray;
               break;
             case 'AddPostStack':
               IconComponent = focused ? AddColor : AddGray;
@@ -77,8 +77,8 @@ export const BottomTab = ({navigation}:BottomTabProps): React.JSX.Element => {
         options={{headerShown: false}}
       />
       <Tab.Screen
-        name="NotificationStack"
-        component={NotificationStack}
+        name="MoodCalenderStack"
+        component={MoodCalenderStack}
         options={{
           headerShown: false,
           // tabBarBadge: 3,

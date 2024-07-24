@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
 import {SafeAreaView, StyleSheet, Text, View, Image} from 'react-native';
-import axios from 'axios';
 import Calender from '../components/calender/Calender';
 
 const sampleUrl = 'https://images.unsplash.com/photo-1717684566059-4d16b456c72a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4fHx8ZW58MHx8fHx8';
