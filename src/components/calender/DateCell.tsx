@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-  ToastAndroid
+  ToastAndroid,
+  Dimensions
 } from 'react-native';
 import Happy from '../../../assets/icons/moods/Happy';
 import Sad from '../../../assets/icons/moods/Sad';
@@ -34,6 +35,8 @@ interface DateCellProps {
   year: number | string;
   moods?:Array<MoodProps>;
 }
+
+const {width,height}=Dimensions.get('window');
 
 const moodEmojis = [
   {name: 'happy', component: Happy},
@@ -95,7 +98,7 @@ const DateCell = ({day, isDisabled, month, year, moods, isToday}: DateCellProps)
         onPress={handleShowModal}
         activeOpacity={0.8}>
         {MoodEmoji ? (
-          <MoodEmoji width={50} height={40} />
+          <MoodEmoji width={width*0.111} height={height*0.043} />
         ) : (
           <Text style={[styles.dayText, isDisabled && styles.disabledText, isToday && styles.todayText]}>
             {day}
@@ -117,7 +120,7 @@ const DateCell = ({day, isDisabled, month, year, moods, isToday}: DateCellProps)
                     key={emoji.name}
                     onPress={() => handleMoodSelect(emoji.name)}
                     style={styles.moodButton}>
-                    <emoji.component width={50} height={50} />
+                    <emoji.component width={width*0.111} height={height*0.054} />
                   </TouchableOpacity>
                 ))}
               </View>
@@ -131,32 +134,35 @@ const DateCell = ({day, isDisabled, month, year, moods, isToday}: DateCellProps)
 
 const styles = StyleSheet.create({
   dayContainer: {
-    height: 50,
-    width: 50,
+    height: height*0.054,
+    width: width*0.111,
     borderRadius: 25,
     borderWidth: 2.5,
     borderColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 7,
-    marginBottom: 5,
+    marginRight: width*0.015,
+    marginBottom: height*0.005,
   },
   disabledContainer: {
     borderColor: '#5D5D6D',
   },
   dayText: {
     color: '#FFFFFF',
-    fontSize: 24,
+    fontSize: width*0.053,
     fontFamily: 'Monsterrat-Bold',
   },
   disabledText: {
     color: '#5D5D6D',
   },
   moodStyle: {
-    fontSize: 35,
+    fontSize: width*0.078,
   },
   moodButton: {
-    margin: 10,
+    marginTop:height*0.010,
+    marginBottom:height*0.010,
+    marginLeft:width*0.022,
+    marginRight:width*0.022,
   },
   modalContainer: {
     flex: 1,
@@ -174,11 +180,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#3A3A3C',
     borderRadius: 25,
-    padding: 10,
+    paddingHorizontal:0.022,
+    paddingVertical:0.010,
     marginBottom: 20,
   },
   moodIcon: {
-    fontSize: 24,
+    fontSize: width*0.053,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -187,14 +194,14 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#3A3A3C',
     borderRadius: 25,
-    width: 50,
-    height: 50,
+    width: width*0.111,
+    height: height*0.054,
     justifyContent: 'center',
     alignItems: 'center',
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: width*0.040,
     fontWeight: 'bold',
   },
   todayContainer:{

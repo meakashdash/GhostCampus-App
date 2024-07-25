@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import DateCell from './DateCell';
 import LeftSlide from '../../../assets/icons/LeftSlide';
@@ -17,7 +18,11 @@ import {baseUrl} from '../../URL';
 import {useRecoilValue} from 'recoil';
 import {tokenState} from '../../context/userContext';
 
+const { width, height } = Dimensions.get('window');
+
 const Calender = (): React.JSX.Element => {
+  console.log('width',width);
+  console.log(height);
   const [date, setDate] = useState(new Date());
   const [moods, setMoods] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -182,7 +187,10 @@ const Calender = (): React.JSX.Element => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    paddingLeft: width*0.02,
+    paddingRight:width*0.02,
+    paddingTop:height*0.01,
+    paddingBottom:height*0.01
   },
   calenderContainer: {
     flexDirection: 'row',
@@ -193,10 +201,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: height*0.01,
   },
   monthYearText: {
-    fontSize: 20,
+    fontSize: width*0.0446,
     color: '#FFFFFF',
     fontFamily: 'Montserrat-SemiBold',
   },
@@ -204,33 +212,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   navButtonText: {
-    fontSize: 20,
-    marginHorizontal: 10,
+    fontSize: width*0.0446,
+    marginHorizontal: width*0.02,
     color: '#FFFFFF',
   },
   leftSlide: {
-    paddingRight: 40,
+    paddingRight: width*0.08,
   },
   rightSlide: {
-    marginRight: 10,
+    marginRight: width*0.02,
   },
   weekdayHeaderContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 5,
-    marginRight: 10.5,
-    marginTop: 20,
+    marginBottom: height*0.005,
+    marginRight: width*0.023,
+    marginTop: height*0.021,
   },
   weekdayHeader: {
-    width: 50,
+    width: width*0.111,
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: width*0.035,
     color: '#FFFFFF',
     fontFamily: 'Montserrat-SemiBold',
   },
   loaderStyle: {
     alignItems: 'center',
-    marginVertical:100
+    marginVertical:height*0.108
   },
 });
 

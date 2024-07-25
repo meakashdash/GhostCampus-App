@@ -1,8 +1,11 @@
 import React, {useEffect} from 'react';
 import {SafeAreaView, StyleSheet, Text, View, Image} from 'react-native';
 import Calender from '../components/calender/Calender';
+import { Dimensions } from 'react-native';
 
 const sampleUrl = 'https://images.unsplash.com/photo-1717684566059-4d16b456c72a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4fHx8ZW58MHx8fHx8';
+
+const { width } = Dimensions.get('window');
 
 const MoodCalender = () => {
   return (
@@ -29,25 +32,27 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingTop: 74,
-    paddingLeft: 17,
+    paddingTop: '6%',
+    paddingLeft: '3%',
+    paddingRight:'3%',
     backgroundColor: '#000000',
   },
   heading: {
     fontFamily: 'Montserrat-SemiBold',
-    fontSize: 24,
+    fontSize: width*0.06,
     color: '#FFA72B',
+    paddingLeft: '1%',
   },
   imageContainer: {
-    paddingTop: 40,
+    paddingTop: '5%',
   },
   imageCSS:{
-    width:415,
-    height:250,
+    width:'100%',
+    aspectRatio: 16 / 9,
     borderRadius:18
   },
   calender: {
-    paddingTop:20
+    paddingTop:'1%'
   },
 });
 
