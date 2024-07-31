@@ -63,7 +63,6 @@ const DateCell = ({day, isDisabled, month, year, moods, isToday}: DateCellProps)
         mood:mood,
         date:`${year}-${month}-${day}`
       }
-      console.log(moodItem);
       const response=await axios.post(`${baseUrl}/mood/create-mood`,moodItem,{
         headers:{
           Authorization:token
@@ -141,8 +140,8 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: width*0.015,
-    marginBottom: height*0.005,
+    marginRight: width*0.017,
+    marginBottom: height*0.008,
   },
   disabledContainer: {
     borderColor: '#5D5D6D',
@@ -173,7 +172,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#2C2C2E',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: 20,
+    paddingHorizontal:width*0.044,
+    paddingVertical:height*0.021
   },
   moodContainer: {
     flexDirection: 'row',

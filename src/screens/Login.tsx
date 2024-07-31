@@ -63,6 +63,7 @@ export const Login = ({navigation}:LoginProps): React.JSX.Element => {
         <InputField
           placeholder="Enter Your Email"
           width={340}
+          placeholderTextColor="#FFFFFF"
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
@@ -71,6 +72,7 @@ export const Login = ({navigation}:LoginProps): React.JSX.Element => {
         <InputField
           placeholder="Enter Your Password"
           width={340}
+          placeholderTextColor="#FFFFFF"
           secureTextEntry={true}
           value={password}
           onChangeText={text => handlePasswordChange(text)}

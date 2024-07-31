@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image, StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import { AddPostStack, HomeScreenStack, MoodCalenderStack, ProfileStack, TrendingStack } from '../InitialAuthStack';
+import { AddPostStack, HomeScreenStack, MoodCalenderStack, ProfileStack, MarketStack } from '../InitialAuthStack';
 import TopBar from './TopBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
@@ -34,7 +34,7 @@ export const BottomTab = ({navigation}:BottomTabProps): React.JSX.Element => {
             case 'ProfileStack':
               IconComponent = focused ? ProfileColor : ProfileGray;
               break;
-            case 'TrendingStack':
+            case 'MarketStack':
               IconComponent = focused ? MarketColor : MarketGray;
               break;
             case 'MoodCalenderStack':
@@ -67,8 +67,8 @@ export const BottomTab = ({navigation}:BottomTabProps): React.JSX.Element => {
         }}
       />
       <Tab.Screen
-        name="TrendingStack"
-        component={TrendingStack}
+        name="MarketStack"
+        component={MarketStack}
         options={{headerShown: false}}
       />
       <Tab.Screen

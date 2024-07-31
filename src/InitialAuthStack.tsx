@@ -4,7 +4,7 @@ import {StyleSheet} from 'react-native';
 import {RootStackParamList} from '../App';
 import {BottomTab} from './components/BottomTab';
 import {HomeScreen} from './screens/HomeScreen';
-import {Trending} from './screens/Trending';
+import {Market} from './screens/Market';
 import {Login} from './screens/Login';
 import {Signup} from './screens/Signup';
 import {AddPost} from './screens/AddPost';
@@ -65,16 +65,16 @@ export const HomeScreenStack = () => {
   );
 };
 
-const TrendingScreenNavigation = createNativeStackNavigator();
-export const TrendingStack = () => {
+const MarketScreenNavigation = createNativeStackNavigator();
+export const MarketStack = () => {
   return (
-    <TrendingScreenNavigation.Navigator>
-      <TrendingScreenNavigation.Screen
-        name="Trending"
-        component={Trending}
+    <MarketScreenNavigation.Navigator>
+      <MarketScreenNavigation.Screen
+        name="Market"
+        component={Market}
         options={{headerShown: false}}
       />
-    </TrendingScreenNavigation.Navigator>
+    </MarketScreenNavigation.Navigator>
   );
 };
 
@@ -120,7 +120,7 @@ export const ProfileStack = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: '#000000',
   },
   icon: {
     width: 40,

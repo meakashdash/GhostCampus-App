@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     paddingLeft: '1%',
   },
   imageContainer: {
-    paddingTop: '5%',
+    paddingTop: '9%',
   },
   imageCSS:{
     width:'100%',
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     borderRadius:18
   },
   calender: {
-    paddingTop:'1%'
+    paddingTop:'5%'
   },
 });
 
