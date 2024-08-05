@@ -10,7 +10,6 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {InputField} from '../components/InputField';
 import {Button} from '../components/Button';
-import {useNavigation,useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
 import {baseUrl} from '../URL';
 import {getToken, storeToken} from '../utils/storage';
