@@ -8,13 +8,7 @@ import axios from 'axios';
 import {baseUrl} from '../URL';
 import ItemCard from '../components/market/ItemCard';
 import moment from 'moment';
-
-interface Category {
-  _id: string;
-  categoryName: string;
-  type: string;
-  childrens: string[];
-}
+import MarketPicker from '../components/market/MarketPicker';
 
 interface Item {
   _id: string;
@@ -27,9 +21,7 @@ interface Item {
 }
 
 export const Market = () => {
-  const [parentCategories, setParentCategories] = useState<Category[]>([]);
   const [token, setToken] = useRecoilState(tokenState);
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [items, setItems] = useState<Item[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -37,10 +29,6 @@ export const Market = () => {
   useEffect(() => {
     getItems();
   }, [currentPage]);
-
-  useEffect(() => {
-    getCategories();
-  }, []);
 
   const getItems=async()=>{
     try {
@@ -58,21 +46,6 @@ export const Market = () => {
       throw error;
     }
   }
-
-  const getCategories = async () => {
-    try {
-      const response = await axios.get(`${baseUrl}/parent-category`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      const data = response?.data?.parentResponse;
-      setParentCategories(data);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  };
 
   const renderLoader = () => {
     return loading ? (
@@ -98,44 +71,7 @@ export const Market = () => {
   )
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.pickerRow}>
-        <View style={styles.pickerWrapper}>
-          <Picker
-            selectedValue={selectedCategory}
-            onValueChange={(itemValue: string) =>
-              setSelectedCategory(itemValue)
-            }
-            dropdownIconColor={'#f4f4f4'}
-            style={styles.picker}>
-            <Picker.Item label="Categories" value={selectedCategory} />
-            {parentCategories.map(categories => (
-              <Picker.Item
-                key={categories._id}
-                label={categories.categoryName}
-                value={categories._id}
-              />
-            ))}
-          </Picker>
-        </View>
-        <View style={styles.pickerWrapper}>
-          <Picker
-            selectedValue={selectedCategory}
-            onValueChange={(itemValue: string) =>
-              setSelectedCategory(itemValue)
-            }
-            dropdownIconColor={'#f4f4f4'}
-            style={styles.picker}>
-            <Picker.Item label="Categories" value={selectedCategory} />
-            {parentCategories.map(categories => (
-              <Picker.Item
-                key={categories._id}
-                label={categories.categoryName}
-                value={categories._id}
-              />
-            ))}
-          </Picker>
-        </View>
-      </View>
+      <MarketPicker />
       <FlatList
         data={items}
         renderItem={renderItem}
