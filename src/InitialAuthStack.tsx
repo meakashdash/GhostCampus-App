@@ -85,7 +85,7 @@ export const AddPostStack = () => {
       <AddPostScreenNavigation.Screen
         name="AddPost"
         component={AddPost}
-        options={{headerShown: false}}
+        options={{headerShown: false,}}
       />
     </AddPostScreenNavigation.Navigator>
   );
