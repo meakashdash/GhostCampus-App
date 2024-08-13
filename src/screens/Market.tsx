@@ -9,6 +9,10 @@ import {baseUrl} from '../URL';
 import ItemCard from '../components/market/ItemCard';
 import moment from 'moment';
 import MarketPicker from '../components/market/MarketPicker';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../App';
+
+type MarketProps=NativeStackScreenProps<RootStackParamList,'Market'>
 
 interface Item {
   _id: string;
@@ -18,9 +22,10 @@ interface Item {
   price: number;
   createdAt: string;
   isLiked: boolean;
+  navigation: MarketProps;
 }
 
-export const Market = () => {
+export const Market = ({navigation}:MarketProps) => {
   const [token, setToken] = useRecoilState(tokenState);
   const [items, setItems] = useState<Item[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -60,13 +65,15 @@ export const Market = () => {
   };
 
   const renderItem=({item}: {item: Item})=>(
-    <ItemCard 
+    <ItemCard
+      _id={item._id} 
       image={item.image?item.image:''}
       title={item.title}
       category={item.categoryName}
       price={item.price}
       date={moment(item.createdAt).format('DD MMM YY')}
       isLiked={true}
+      navigation={navigation}
     />
   )
   return (

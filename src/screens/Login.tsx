@@ -45,7 +45,7 @@ export const Login = ({navigation}:LoginProps): React.JSX.Element => {
       setToken(response.data.token);
       setUserId(response.data.userId);
       ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-      navigation.replace('BottomTab');
+      navigation.replace('BottomTabWithModals');
     }
     else{
       ToastAndroid.show(response.data.message, ToastAndroid.SHORT);

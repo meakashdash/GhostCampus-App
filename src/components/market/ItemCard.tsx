@@ -4,26 +4,38 @@ import Liked from '../../../assets/icons/market/Liked';
 import DisLiked from '../../../assets/icons/market/DisLiked';
 
 interface ItemCardProps {
+  _id: string;
   image: string;
   title: string;
   category: string;
   price: number;
   date: string;
   isLiked: boolean;
+  navigation:any;
 }
 
 const uri="https://images.unsplash.com/photo-1717684566059-4d16b456c72a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4fHx8ZW58MHx8fHx8"
 
 const ItemCard = ({
+  _id,
   image,
   title,
   category,
   price,
   date,
   isLiked,
+  navigation
 }: ItemCardProps) => {
+  const handleChangeScreen=async()=>{
+    try {
+      navigation.push('MarketItem',{_id:_id});
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={handleChangeScreen}>
       {image?<Image source={{uri: uri}} style={styles.imageCss} />:<Image source={{uri: uri}} style={styles.imageCss} />}
       <TouchableOpacity style={styles.likeButton}>
         {isLiked ? <Liked style={styles.icon} /> : <DisLiked style={styles.icon} />}
