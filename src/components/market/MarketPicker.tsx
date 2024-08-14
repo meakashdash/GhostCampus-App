@@ -1,7 +1,7 @@
 import {Picker} from '@react-native-picker/picker';
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {SafeAreaView, StyleSheet, ToastAndroid, View} from 'react-native';
 import {baseUrl} from '../../URL';
 import {tokenState} from '../../context/userContext';
 import {useRecoilState} from 'recoil';
@@ -18,7 +18,7 @@ interface ChildCategory{
     categoryName:string;
 }
 
-const MarketPicker = () => {
+const MarketPicker = ({items,setItems}:any) => {
   const [selectedParentCategory, setSelectParentCategory] = useState<string>('');
   const [selectedChildCategory, setSelectChildCategory] = useState<string>('');
   const [parentCategories, setParentCategories] = useState<Category[]>([]);
@@ -35,8 +35,27 @@ const MarketPicker = () => {
   },[selectedParentCategory])
 
   useEffect(()=>{
-    console.log("Child Category",selectedChildCategory);
+    getChildCategoryItems(selectedChildCategory);
   },[selectedChildCategory])
+
+  const getChildCategoryItems=async(categoryId:string)=>{
+    try {
+      const response=await axios.get(`${baseUrl}/market/category/${categoryId}`,{
+        headers:{
+          Authorization:token
+        }
+      })
+      const data=response?.data;
+      if(data.statusCode===200){
+        setItems(data.items);
+      }else{
+        ToastAndroid.show(data.message,ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      console.log(error)
+      throw error;
+    }
+  }
 
   const getCategories = async () => {
     try {

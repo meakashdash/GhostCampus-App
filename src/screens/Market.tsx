@@ -82,7 +82,7 @@ export const Market = ({navigation}:MarketProps) => {
   }
   return (
     <SafeAreaView style={styles.container}>
-      <MarketPicker />
+      <MarketPicker items={items} setItems={setItems}/>
       <FlatList
         data={items}
         renderItem={renderItem}
