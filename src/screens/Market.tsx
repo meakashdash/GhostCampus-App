@@ -3,7 +3,7 @@ import {ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View} f
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Picker} from '@react-native-picker/picker';
 import {useRecoilState} from 'recoil';
-import {tokenState} from '../context/userContext';
+import {tokenState, userWishlistItemId} from '../context/userContext';
 import axios from 'axios';
 import {baseUrl} from '../URL';
 import ItemCard from '../components/market/ItemCard';
@@ -30,6 +30,7 @@ export const Market = ({navigation}:MarketProps) => {
   const [items, setItems] = useState<Item[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [wishList, setWishList] = useRecoilState(userWishlistItemId);
 
   useEffect(() => {
     getItems();
@@ -64,18 +65,21 @@ export const Market = ({navigation}:MarketProps) => {
     setCurrentPage(currentPage + 1);
   };
 
-  const renderItem=({item}: {item: Item})=>(
-    <ItemCard
-      _id={item._id} 
-      image={item.image?item.image:''}
-      title={item.title}
-      category={item.categoryName}
-      price={item.price}
-      date={moment(item.createdAt).format('DD MMM YY')}
-      isLiked={true}
-      navigation={navigation}
-    />
-  )
+  const renderItem=({item}: {item: Item})=>{
+    const isLiked=wishList.includes(item._id);
+    return(
+      <ItemCard
+        _id={item._id} 
+        image={item.image?item.image:''}
+        title={item.title}
+        category={item.categoryName}
+        price={item.price}
+        date={moment(item.createdAt).format('DD MMM YY')}
+        isLiked={isLiked}
+        navigation={navigation}
+      />
+    )
+  }
   return (
     <SafeAreaView style={styles.container}>
       <MarketPicker />

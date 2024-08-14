@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -16,8 +17,7 @@ import ShoppingCart from '../../assets/icons/market/ShoppingCart';
 import axios from 'axios';
 import {baseUrl} from '../URL';
 import {useRecoilState} from 'recoil';
-import {tokenState} from '../context/userContext';
-import Query from '../../assets/icons/market/Query';
+import {tokenState, userWishlistItemId} from '../context/userContext';
 
 type MarketItemProps = NativeStackScreenProps<RootStackParamList, 'MarketItem'>;
 
@@ -45,11 +45,13 @@ interface Category {
 }
 
 const MarketItem = ({navigation, route}: MarketItemProps) => {
-  const {_id, isLiked} = route.params;
+  const {_id} = route.params;
   const [token, setToken] = useRecoilState(tokenState);
   const [itemDetails, setItemDetails] = useState<ItemDetails>();
+  const [wishList, setWishList] = useRecoilState(userWishlistItemId);
   const uri =
     'https://images.unsplash.com/photo-1717684566059-4d16b456c72a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4fHx8ZW58MHx8fHx8';
+
   const getItemDetails = async (_id: string) => {
     try {
       const response = await axios.get(`${baseUrl}/market/${_id}`, {
@@ -63,6 +65,32 @@ const MarketItem = ({navigation, route}: MarketItemProps) => {
       throw error;
     }
   };
+
+  const handleWishList = async () => {
+    try {
+      const response=await axios.post(`${baseUrl}/market/wishlist`,{
+        itemId:_id
+      },{
+        headers:{
+          Authorization:token
+        }
+      })
+      if(response.data.statusCode===200){
+        if(response.data.message==='Wishlisted the item successfully'){
+          setWishList((prevWishList)=>[...prevWishList,_id]);
+        }else if(response.data.message==='Unsave the item successfully'){
+          setWishList((prevWishList)=>prevWishList.filter((item)=>item!==_id));
+        }
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      }else{
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+  const isLiked = wishList.includes(_id);
   useEffect(() => {
     getItemDetails(_id);
   }, [_id]);
@@ -70,7 +98,7 @@ const MarketItem = ({navigation, route}: MarketItemProps) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.imageContainer}>
         <Image source={{uri: uri}} style={styles.imageCSS} />
-        <TouchableOpacity style={styles.likeButton}>
+        <TouchableOpacity style={styles.likeButton} onPress={handleWishList}>
           {isLiked ? (
             <Liked style={styles.icon} />
           ) : (
@@ -97,11 +125,15 @@ const MarketItem = ({navigation, route}: MarketItemProps) => {
             ))}
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Campus</Text>
-              <Text style={styles.detailValue}>{itemDetails?.location.campus}</Text>
+              <Text style={styles.detailValue}>
+                {itemDetails?.location.campus}
+              </Text>
             </View>
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Building</Text>
-              <Text style={styles.detailValue}>{itemDetails?.location.building}</Text>
+              <Text style={styles.detailValue}>
+                {itemDetails?.location.building}
+              </Text>
             </View>
           </View>
           <TouchableOpacity style={styles.buyButton}>
@@ -110,14 +142,6 @@ const MarketItem = ({navigation, route}: MarketItemProps) => {
             </View>
             <View>
               <Text style={styles.buyButtonText}>₹ {itemDetails?.price}</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.queryButton}>
-            <View>
-              <Query />
-            </View>
-            <View>
-              <Text style={styles.buyButtonText}>Message Owner</Text>
             </View>
           </TouchableOpacity>
         </View>

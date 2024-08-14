@@ -34,3 +34,8 @@ export const checkCommentPostId=atom<string>({
     key:'checkCommentPostId',
     default:''
 })
+
+export const userWishlistItemId=atom<string[]>({
+    key:'userWishlistItemId',
+    default:[]
+})

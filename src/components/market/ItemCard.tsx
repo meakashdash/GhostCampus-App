@@ -1,7 +1,11 @@
 import React from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Image, StyleSheet, Text, ToastAndroid, TouchableOpacity, View} from 'react-native';
 import Liked from '../../../assets/icons/market/Liked';
 import DisLiked from '../../../assets/icons/market/DisLiked';
+import axios from 'axios';
+import { baseUrl } from '../../URL';
+import { useRecoilState } from 'recoil';
+import { tokenState, userWishlistItemId } from '../../context/userContext';
 
 interface ItemCardProps {
   _id: string;
@@ -26,6 +30,10 @@ const ItemCard = ({
   isLiked,
   navigation
 }: ItemCardProps) => {
+
+  const [token,setToken]=useRecoilState(tokenState);
+  const [wishList,setWishList]=useRecoilState(userWishlistItemId);
+
   const handleChangeScreen=async()=>{
     try {
       navigation.push('MarketItem',{_id:_id});
@@ -34,10 +42,35 @@ const ItemCard = ({
       throw error;
     }
   }
+
+  const handleWishlist=async()=>{
+    try {
+      const response=await axios.post(`${baseUrl}/market/wishlist`,{
+        itemId:_id
+      },{
+        headers:{
+          Authorization:token
+        }
+      })
+      if(response.data.statusCode===200){
+        if(response.data.message==='Wishlisted the item successfully'){
+          setWishList((prevWishList)=>[...prevWishList,_id]);
+        }else if(response.data.message==='Unsave the item successfully'){
+          setWishList((prevWishList)=>prevWishList.filter((item)=>item!==_id));
+        }
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      }else{
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
   return (
     <TouchableOpacity style={styles.container} onPress={handleChangeScreen}>
       {image?<Image source={{uri: uri}} style={styles.imageCss} />:<Image source={{uri: uri}} style={styles.imageCss} />}
-      <TouchableOpacity style={styles.likeButton}>
+      <TouchableOpacity style={styles.likeButton} onPress={handleWishlist}>
         {isLiked ? <Liked style={styles.icon} /> : <DisLiked style={styles.icon} />}
       </TouchableOpacity>
       <View style={styles.contentContainer}>
