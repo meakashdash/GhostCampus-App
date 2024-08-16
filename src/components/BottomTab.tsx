@@ -3,7 +3,7 @@ import {Image, StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import { AddPostStack, HomeScreenStack, MoodCalenderStack, ProfileStack, MarketStack } from '../InitialAuthStack';
 import TopBar from './TopBar';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import HomeColor from '../../assets/icons/bottombar/HomeColor';
 import HomeGray from '../../assets/icons/bottombar/HomeGray';
@@ -15,6 +15,7 @@ import AddColor from '../../assets/icons/bottombar/AddColor';
 import AddGray from '../../assets/icons/bottombar/AddGray';
 import MoodColor from '../../assets/icons/bottombar/MoodColor';
 import MoodGray from '../../assets/icons/bottombar/MoodGray';
+import MarketItem from '../screens/MarketItem';
 
 const Tab = createBottomTabNavigator();
 
@@ -93,6 +94,28 @@ export const BottomTab = ({navigation}:BottomTabProps): React.JSX.Element => {
     </Tab.Navigator>
   );
 };
+
+const RootStack = createNativeStackNavigator();
+
+type BottomTabWithModalProps=NativeStackScreenProps<RootStackParamList,'BottomTabWithModals'>
+
+export const BottomTabWithModals = ({navigation}:BottomTabWithModalProps) => (
+  <RootStack.Navigator>
+    <RootStack.Screen
+      name="BottomTab"
+      component={BottomTab}
+      options={{ headerShown: false }}
+    />
+    <RootStack.Screen
+      name="MarketItem"
+      component={MarketItem}
+      options={{
+        headerShown: false,
+        presentation: 'modal',
+      }}
+    />
+  </RootStack.Navigator>
+);
 
 const styles = StyleSheet.create({
   container: {

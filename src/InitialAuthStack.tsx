@@ -2,7 +2,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React,{useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {RootStackParamList} from '../App';
-import {BottomTab} from './components/BottomTab';
+import {BottomTab, BottomTabWithModals} from './components/BottomTab';
 import {HomeScreen} from './screens/HomeScreen';
 import {Market} from './screens/Market';
 import {Login} from './screens/Login';
@@ -14,6 +14,7 @@ import CommentSheet from './components/CommentSheet';
 import { useRecoilState } from 'recoil';
 import { visibleComment } from './context/userContext';
 import MoodCalender from './screens/MoodCalender';
+import MarketItem from './screens/MarketItem';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const InitialAuthStack = () => {
@@ -37,13 +38,8 @@ const InitialAuthStack = () => {
           options={{headerShown: false}}
         />
         <Stack.Screen
-          name="BottomTab"
-          component={BottomTab}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="MoodCalender"
-          component={MoodCalender}
+          name="BottomTabWithModals"
+          component={BottomTabWithModals}
           options={{headerShown: false}}
         />
       </Stack.Navigator>
@@ -85,7 +81,7 @@ export const AddPostStack = () => {
       <AddPostScreenNavigation.Screen
         name="AddPost"
         component={AddPost}
-        options={{headerShown: false}}
+        options={{headerShown: false,}}
       />
     </AddPostScreenNavigation.Navigator>
   );

@@ -12,13 +12,16 @@ import {RecoilRoot} from 'recoil';
 import InitialAuthStack from './src/InitialAuthStack';
 
 export type RootStackParamList = {
-  BottomTab: undefined;
+  BottomTabWithModals: undefined;
+  BottomTab:undefined;
   Splash: undefined;
   Login: undefined;
   Signup: undefined;
   HomeScreen: undefined;
   TopBar: undefined;
   MoodCalender: undefined;
+  Market:undefined;
+  MarketItem:{_id:string,isLiked:boolean};
 };
 
 function App() {

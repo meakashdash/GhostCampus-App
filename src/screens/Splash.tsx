@@ -30,7 +30,7 @@ export const Splash: React.FC<SplashProps> = ({navigation}: SplashProps) => {
       }else{
         setToken(storedToken)
         setUserId(response.data.data.userId)
-        navigation.replace('BottomTab')
+        navigation.replace('BottomTabWithModals')
       }
     } catch (error) {
       console.error('Error checking token:', error);
