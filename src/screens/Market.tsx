@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, FlatList, StyleSheet, Text, ToastAndroid, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Picker} from '@react-native-picker/picker';
 import {useRecoilState} from 'recoil';
@@ -31,10 +31,52 @@ export const Market = ({navigation}:MarketProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [wishList, setWishList] = useRecoilState(userWishlistItemId);
+  const [selectedCategory, setSelectedCategory] = useState('');
+
+  useEffect(()=>{
+    if (selectedCategory) {
+      setCurrentPage(1);
+      setItems([]);
+      getChildCategoryItems(selectedCategory);
+    }else {
+      setCurrentPage(1);
+      setItems([]);
+      getItems();
+    }
+  },[selectedCategory])
 
   useEffect(() => {
-    getItems();
+    if (currentPage > 1) {
+      if (selectedCategory) {
+        getChildCategoryItems(selectedCategory);
+      } else {
+        getItems();
+      }
+    }
   }, [currentPage]);
+
+  const getChildCategoryItems = async (categoryId: string) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${baseUrl}/market/category/${categoryId}?page=${currentPage}&limit=${20}`, {
+        headers: {
+          Authorization: token
+        }
+      });
+      const data = response?.data;
+      console.log(data);
+      if (data.statusCode === 200) {
+        setItems(prevItems => [...prevItems, ...data.items]);
+      } else {
+        ToastAndroid.show(data.message, ToastAndroid.SHORT);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      throw error;
+    }
+  };
 
   const getItems=async()=>{
     try {
@@ -54,7 +96,7 @@ export const Market = ({navigation}:MarketProps) => {
   }
 
   const renderLoader = () => {
-    return loading ? (
+    return loading && items.length > 0 ? (
       <View style={styles.loaderStyle}>
         <ActivityIndicator size="large" color="#B20000" />
       </View>
@@ -62,8 +104,16 @@ export const Market = ({navigation}:MarketProps) => {
   };
 
   const loadMoreItem = () => {
-    setCurrentPage(currentPage + 1);
+    if (!loading) {
+      setCurrentPage(prevPage => prevPage + 1);
+    }
   };
+
+  const EmptyState = () => (
+    <View style={styles.emptyState}>
+      <Text style={styles.emptyStateText}>No items found in this category</Text>
+    </View>
+  );
 
   const renderItem=({item}: {item: Item})=>{
     const isLiked=wishList.includes(item._id);
@@ -82,17 +132,25 @@ export const Market = ({navigation}:MarketProps) => {
   }
   return (
     <SafeAreaView style={styles.container}>
-      <MarketPicker items={items} setItems={setItems}/>
-      <FlatList
-        data={items}
-        renderItem={renderItem}
-        keyExtractor={(item) => item._id}
-        numColumns={2}
-        contentContainerStyle={styles.list}
-        ListFooterComponent={renderLoader}
-        onEndReached={loadMoreItem}
-        onEndReachedThreshold={0.5}
-      />
+      <MarketPicker setSelectedCategory={setSelectedCategory} />
+      {loading && items.length === 0 ? (
+        <View style={styles.fullScreenLoader}>
+          <ActivityIndicator size="large" color="#B20000" />
+        </View>
+      ) : items.length > 0 ? (
+        <FlatList
+          data={items}
+          renderItem={renderItem}
+          keyExtractor={(item) => item._id}
+          numColumns={2}
+          contentContainerStyle={styles.list}
+          ListFooterComponent={renderLoader}
+          onEndReached={loadMoreItem}
+          onEndReachedThreshold={0.5}
+        />
+      ) : (
+        <EmptyState />
+      )}
     </SafeAreaView>
   );
 };
@@ -128,4 +186,19 @@ const styles = StyleSheet.create({
     marginVertical: 16,
     alignItems: 'center',
   },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyStateText: {
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
+  },
+  fullScreenLoader:{
+    flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  }
 });
