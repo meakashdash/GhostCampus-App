@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 303,
+    height: 320,
   },
   backgroundVideo: {
     width: '100%',

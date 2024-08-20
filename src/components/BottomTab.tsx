@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   tabBar: {
-    height: 80,
+    height: 60,
     // borderTopWidth: 0,
     position: 'absolute',
     bottom: 0,
@@ -140,5 +140,6 @@ const styles = StyleSheet.create({
     right: 0,
     elevation: 0,
     backgroundColor: '#252525',
+    alignItems: 'center',
   },
 });

@@ -23,19 +23,19 @@ function AddColor(props:any) {
         height={41}
       >
         <Path
-          d="M20.5 39C30.718 39 39 30.718 39 20.5 39 10.283 30.718 2 20.5 2 10.283 2 2 10.283 2 20.5 2 30.718 10.283 39 20.5 39z"
-          fill="#fff"
-          stroke="#fff"
-          strokeWidth={3.7}
-          strokeLinejoin="round"
-        />
-        <Path
-          d="M20.5 13.1v14.8m-7.4-7.4h14.8"
-          stroke="#000"
-          strokeWidth={3.7}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        fill="#fff"
+        stroke="#fff"
+        strokeLinejoin="round"
+        strokeWidth={3}
+        d="M17 32c8.285 0 15-6.715 15-15 0-8.284-6.715-15-15-15C8.716 2 2 8.716 2 17c0 8.285 6.716 15 15 15Z"
+      />
+      <Path
+        stroke="#000"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={3}
+        d="M17 11v12m-6-6h12"
+      />
       </Mask>
       <G mask="url(#a)">
         <Path d="M-1.7-1.7h44.4v44.4H-1.7V-1.7z" fill="#F4B0B0" />
