@@ -8,7 +8,8 @@ import {
   TouchableWithoutFeedback,
   View,
   ToastAndroid,
-  Dimensions
+  Dimensions,
+  ActivityIndicator
 } from 'react-native';
 import Happy from '../../../assets/icons/moods/Happy';
 import Sad from '../../../assets/icons/moods/Sad';
@@ -49,12 +50,14 @@ const moodEmojis = [
 const DateCell = ({day, isDisabled, month, year, moods, isToday}: DateCellProps): React.JSX.Element => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectMood, setSelectMood] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const token=useRecoilValue(tokenState);
   useEffect(() => {
     const currentMood = moods?.find(mood => mood.date === `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
     if (currentMood) {
       setSelectMood(currentMood.mood);
     }
+    setIsLoading(false);
   }, [moods]);
   const handleShowModal = () => setModalOpen(true);
   const handleMoodSelect = async(mood: string) => {
@@ -86,6 +89,14 @@ const DateCell = ({day, isDisabled, month, year, moods, isToday}: DateCellProps)
     setModalOpen(false);
   };
 
+  const renderLoader=()=>{
+    return (
+      <View style={styles.fullScreenLoader}>
+        <ActivityIndicator size="large" color="#FFA72B" />
+      </View>
+    );
+  }
+
   const MoodEmoji = selectMood
     ? moodEmojis.find(emoji => emoji.name === selectMood)?.component
     : null;
@@ -96,8 +107,10 @@ const DateCell = ({day, isDisabled, month, year, moods, isToday}: DateCellProps)
         style={[styles.dayContainer, isDisabled && styles.disabledContainer, isToday && styles.todayContainer]}
         onPress={handleShowModal}
         activeOpacity={0.8}>
-        {MoodEmoji ? (
-          <MoodEmoji width={width*0.111} height={height*0.043} />
+        {isLoading ? (
+          renderLoader() // Show loader while fetching or updating mood
+        ) : MoodEmoji ? (
+          <MoodEmoji width={width * 0.111} height={height * 0.043} />
         ) : (
           <Text style={[styles.dayText, isDisabled && styles.disabledText, isToday && styles.todayText]}>
             {day}
@@ -210,6 +223,9 @@ const styles = StyleSheet.create({
   },
   todayText:{
     color: '#000000',
+  },
+  fullScreenLoader:{
+
   }
 });
 

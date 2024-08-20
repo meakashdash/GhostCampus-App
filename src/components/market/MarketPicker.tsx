@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, View, Text, TouchableOpacity, Modal, FlatList } from 'react-native';
+import { SafeAreaView, StyleSheet, View, Text, TouchableOpacity, Modal, FlatList, TouchableWithoutFeedback } from 'react-native';
 import axios from 'axios';
 import { baseUrl } from '../../URL';
 import { tokenState } from '../../context/userContext';
 import { useRecoilState } from 'recoil';
 import DownIcon from '../../../assets/icons/market/DownIcon';
+import BigDownIcon from '../../../assets/icons/market/BigDownIcon';
 
 interface Category {
   _id: string;
@@ -81,18 +82,20 @@ const MarketPicker = ({ setSelectedCategory }: any) => {
     setModalVisible(false);
   };
 
-  const renderItem = ({ item }: { item: Category | ChildCategory }) => (
-    <TouchableOpacity style={styles.itemButton} onPress={() => selectItem(item)}>
-      <Text style={styles.itemText}>{item.categoryName}</Text>
-    </TouchableOpacity>
-  );
+  const renderItem = ({ item }: { item: Category | ChildCategory }) => {
+    return (
+      <TouchableOpacity style={styles.itemButton} onPress={() => selectItem(item)}>
+        <Text style={styles.itemText}>{item.categoryName}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.pickerRow}>
         <TouchableOpacity style={styles.pickerButton} onPress={() => openPicker(true)}>
           <Text style={styles.pickerButtonText}>
-            {selectedParentCategory ? selectedParentCategory.categoryName : 'Select Category'}
+            {selectedParentCategory ? selectedParentCategory.categoryName : 'Category'}
           </Text>
           <DownIcon />
         </TouchableOpacity>
@@ -102,7 +105,7 @@ const MarketPicker = ({ setSelectedCategory }: any) => {
           disabled={!selectedParentCategory}
         >
           <Text style={styles.pickerButtonText}>
-            {selectedChildCategory ? selectedChildCategory.categoryName : 'Select Subcategory'}
+            {selectedChildCategory ? selectedChildCategory.categoryName : 'Subcategory'}
           </Text>
           <DownIcon />
         </TouchableOpacity>
@@ -114,19 +117,21 @@ const MarketPicker = ({ setSelectedCategory }: any) => {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalView}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-              <DownIcon />
-            </TouchableOpacity>
-            <FlatList
-              data={isParentPicker ? parentCategories : childCategories}
-              renderItem={renderItem}
-              keyExtractor={(item) => item._id}
-              style={styles.list}
-            />
-          </View>
-        </View>
+        <TouchableOpacity style={styles.modalView} onPress={() => setModalVisible(false)}>
+          <TouchableWithoutFeedback>
+            <View style={styles.modalContent}>
+              <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                <BigDownIcon />
+              </TouchableOpacity>
+              <FlatList
+                data={isParentPicker ? parentCategories : childCategories}
+                renderItem={renderItem}
+                keyExtractor={(item) => item._id}
+                style={styles.list}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        </TouchableOpacity>
       </Modal>
     </SafeAreaView>
   );
@@ -134,13 +139,13 @@ const MarketPicker = ({ setSelectedCategory }: any) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#141414',
+    // backgroundColor: '#141414',
     padding: 10,
   },
   pickerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   pickerButton: {
     flex: 1,
@@ -148,9 +153,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#2A2A2A',
-    borderRadius: 5,
-    padding: 10,
-    marginHorizontal: 4,
+    borderRadius: 9,
+    padding: 15,
+    marginHorizontal: 3,
   },
   pickerButtonDisabled: {
     opacity: 0.5,
@@ -158,11 +163,13 @@ const styles = StyleSheet.create({
   pickerButtonText: {
     color: '#FFF',
     fontSize: 16,
+    fontFamily: 'Montserrat-Medium',
   },
   modalView: {
     flex: 1,
     justifyContent: 'flex-end',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 999,
   },
   modalContent: {
     backgroundColor: '#141414',
@@ -170,13 +177,15 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: 20,
     maxHeight: '50%',
+    flex: 1,
   },
   closeButton: {
-    alignSelf: 'flex-end',
+    alignSelf: 'center',
     marginBottom: 10,
+    width: 40,
   },
   list: {
-    flex: 1,
+    flexGrow: 1,
   },
   itemButton: {
     paddingVertical: 15,
@@ -186,6 +195,7 @@ const styles = StyleSheet.create({
   itemText: {
     color: '#FFF',
     fontSize: 18,
+    fontFamily: 'Montserrat-Regular',
   },
 });
 

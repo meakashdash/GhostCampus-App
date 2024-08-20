@@ -195,6 +195,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     textAlign: 'center',
+    fontFamily: 'Montserrat-Medium',
   },
   fullScreenLoader:{
     flex: 1,

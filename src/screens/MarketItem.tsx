@@ -18,6 +18,7 @@ import axios from 'axios';
 import {baseUrl} from '../URL';
 import {useRecoilState} from 'recoil';
 import {tokenState, userWishlistItemId} from '../context/userContext';
+import {ActivityIndicator} from 'react-native';
 
 type MarketItemProps = NativeStackScreenProps<RootStackParamList, 'MarketItem'>;
 
@@ -51,15 +52,17 @@ const MarketItem = ({navigation, route}: MarketItemProps) => {
   const [wishList, setWishList] = useRecoilState(userWishlistItemId);
   const uri =
     'https://images.unsplash.com/photo-1717684566059-4d16b456c72a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4fHx8ZW58MHx8fHx8';
-
+  const [loading, setLoading] = useState(false);
   const getItemDetails = async (_id: string) => {
     try {
+      setLoading(true);
       const response = await axios.get(`${baseUrl}/market/${_id}`, {
         headers: {
           Authorization: token,
         },
       });
       setItemDetails(response.data.item);
+      setLoading(false);
     } catch (error) {
       console.log(error);
       throw error;
@@ -68,21 +71,27 @@ const MarketItem = ({navigation, route}: MarketItemProps) => {
 
   const handleWishList = async () => {
     try {
-      const response=await axios.post(`${baseUrl}/market/wishlist`,{
-        itemId:_id
-      },{
-        headers:{
-          Authorization:token
-        }
-      })
-      if(response.data.statusCode===200){
-        if(response.data.message==='Wishlisted the item successfully'){
-          setWishList((prevWishList)=>[...prevWishList,_id]);
-        }else if(response.data.message==='Unsave the item successfully'){
-          setWishList((prevWishList)=>prevWishList.filter((item)=>item!==_id));
+      const response = await axios.post(
+        `${baseUrl}/market/wishlist`,
+        {
+          itemId: _id,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        },
+      );
+      if (response.data.statusCode === 200) {
+        if (response.data.message === 'Wishlisted the item successfully') {
+          setWishList(prevWishList => [...prevWishList, _id]);
+        } else if (response.data.message === 'Unsave the item successfully') {
+          setWishList(prevWishList =>
+            prevWishList.filter(item => item !== _id),
+          );
         }
         ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-      }else{
+      } else {
         ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
       }
     } catch (error) {
@@ -90,62 +99,79 @@ const MarketItem = ({navigation, route}: MarketItemProps) => {
       throw error;
     }
   };
+  const renderLoader = () => {
+    return (
+      <View style={styles.fullScreenLoader}>
+        <ActivityIndicator size="large" color="#B20000" />
+      </View>
+    );
+  };
   const isLiked = wishList.includes(_id);
   useEffect(() => {
     getItemDetails(_id);
   }, [_id]);
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image source={{uri: uri}} style={styles.imageCSS} />
-        <TouchableOpacity style={styles.likeButton} onPress={handleWishList}>
-          {isLiked ? (
-            <Liked style={styles.icon} />
-          ) : (
-            <DisLiked style={styles.icon} />
-          )}
-        </TouchableOpacity>
-      </View>
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.detailsContainer}>
-          <Text style={styles.itemName}>{itemDetails?.title}</Text>
-          <Text style={styles.itemType}>
-            {itemDetails?.category[0].categoryName}
-          </Text>
-          <Text style={styles.description}>{itemDetails?.description}</Text>
-
-          <View style={styles.divider} />
-
-          <View style={styles.detailsSection}>
-            {itemDetails?.attributes.map((attribute, index) => (
-              <View style={styles.detailRow} key={index}>
-                <Text style={styles.detailLabel}>{attribute.label}</Text>
-                <Text style={styles.detailValue}>{attribute.value}</Text>
-              </View>
-            ))}
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Campus</Text>
-              <Text style={styles.detailValue}>
-                {itemDetails?.location.campus}
-              </Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Building</Text>
-              <Text style={styles.detailValue}>
-                {itemDetails?.location.building}
-              </Text>
-            </View>
+      {loading ? (
+        renderLoader()
+      ) : (
+        <>
+          <View style={styles.imageContainer}>
+            <Image source={{uri: uri}} style={styles.imageCSS} />
+            <TouchableOpacity
+              style={styles.likeButton}
+              onPress={handleWishList}>
+              {isLiked ? (
+                <Liked style={styles.icon} />
+              ) : (
+                <DisLiked style={styles.icon} />
+              )}
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.buyButton}>
-            <View>
-              <ShoppingCart />
+          <ScrollView style={styles.scrollContainer}>
+            <View style={styles.detailsContainer}>
+              <Text style={styles.itemName}>{itemDetails?.title}</Text>
+              <Text style={styles.itemType}>
+                {itemDetails?.category[0].categoryName}
+              </Text>
+              <Text style={styles.description}>{itemDetails?.description}</Text>
+
+              <View style={styles.divider} />
+
+              <View style={styles.detailsSection}>
+                {itemDetails?.attributes.map((attribute, index) => (
+                  <View style={styles.detailRow} key={index}>
+                    <Text style={styles.detailLabel}>{attribute.label}</Text>
+                    <Text style={styles.detailValue}>{attribute.value}</Text>
+                  </View>
+                ))}
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Campus</Text>
+                  <Text style={styles.detailValue}>
+                    {itemDetails?.location.campus}
+                  </Text>
+                </View>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Building</Text>
+                  <Text style={styles.detailValue}>
+                    {itemDetails?.location.building}
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity style={styles.buyButton}>
+                <View>
+                  <ShoppingCart />
+                </View>
+                <View>
+                  <Text style={styles.buyButtonText}>
+                    ₹ {itemDetails?.price}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </View>
-            <View>
-              <Text style={styles.buyButtonText}>₹ {itemDetails?.price}</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+          </ScrollView>
+        </>
+      )}
     </SafeAreaView>
   );
 };
@@ -244,5 +270,10 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
+  },
+  fullScreenLoader: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
