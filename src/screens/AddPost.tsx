@@ -1,23 +1,35 @@
 import React, { useState } from 'react';
 import {
   StyleSheet,
-  Text,
   TextInput,
-  ToastAndroid,
-  Touchable,
   TouchableOpacity,
   View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Cross from '../../assets/icons/add-post/Cross';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../App';
+import Toast from 'react-native-toast-message';
+import { toastConfig } from '../components/toast/ToastConfig';
 
-export const AddPost = (): React.JSX.Element => {
+type AddPostStackProps=NativeStackScreenProps<RootStackParamList,'AddPost'>
+
+export const AddPost = ({navigation}:AddPostStackProps): React.JSX.Element => {
   const [title, setTitle] = useState('');
   const [body, setBody]=useState('');
+  const handleGoBack=()=>{
+    navigation.goBack();
+  }
   const handleChangeTitle = (text: string) => {
-    if(text.length>10){
-      //show a tooltip with a message
-      
+    if(text.length>50){
+      Toast.show({
+        type: 'success',
+        text1: 'Warning',
+        text2: 'Title cannot exceed 10 characters',
+        position: 'top',
+        visibilityTime: 4000,
+        topOffset: 20
+      });
     }else{
       setTitle(text);
     }
@@ -28,7 +40,7 @@ export const AddPost = (): React.JSX.Element => {
   return (
     <SafeAreaView style={styles.safeContainer}>
       <View style={styles.crossContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleGoBack}>
           <Cross />
         </TouchableOpacity>
       </View>
@@ -41,7 +53,7 @@ export const AddPost = (): React.JSX.Element => {
           keyboardType="visible-password"
           value={title}
           onChangeText={(text)=>handleChangeTitle(text)}
-          maxLength={10}
+          multiline
         />
         <TextInput
           style={[styles.textInput, styles.bodyContainer]}
@@ -50,8 +62,10 @@ export const AddPost = (): React.JSX.Element => {
           keyboardType="visible-password"
           value={body}
           onChangeText={(text)=>handleChangeBody(text)}
+          multiline
         />
       </View>
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 };

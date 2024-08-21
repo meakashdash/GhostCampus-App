@@ -64,7 +64,6 @@ export const Market = ({navigation}:MarketProps) => {
         }
       });
       const data = response?.data;
-      console.log(data);
       if (data.statusCode === 200) {
         setItems(prevItems => [...prevItems, ...data.items]);
       } else {

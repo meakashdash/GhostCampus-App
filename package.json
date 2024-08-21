@@ -34,6 +34,7 @@
     "react-native-svg": "^15.3.0",
     "react-native-svg-transformer": "^1.4.0",
     "react-native-swiper": "^1.6.0",
+    "react-native-toast-message": "^2.2.0",
     "react-native-video": "^5.2.1",
     "recoil": "^0.7.7"
   },

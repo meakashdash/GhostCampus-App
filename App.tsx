@@ -22,6 +22,7 @@ export type RootStackParamList = {
   MoodCalender: undefined;
   Market:undefined;
   MarketItem:{_id:string,isLiked:boolean};
+  AddPost:undefined;
 };
 
 function App() {

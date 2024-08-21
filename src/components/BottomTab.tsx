@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, StyleSheet} from 'react-native';
+import {Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import { AddPostStack, HomeScreenStack, MoodCalenderStack, ProfileStack, MarketStack } from '../InitialAuthStack';
 import TopBar from './TopBar';
@@ -16,6 +16,7 @@ import AddGray from '../../assets/icons/bottombar/AddGray';
 import MoodColor from '../../assets/icons/bottombar/MoodColor';
 import MoodGray from '../../assets/icons/bottombar/MoodGray';
 import MarketItem from '../screens/MarketItem';
+import { AddPost } from '../screens/AddPost';
 
 const Tab = createBottomTabNavigator();
 
@@ -41,9 +42,9 @@ export const BottomTab = ({navigation}:BottomTabProps): React.JSX.Element => {
             case 'MoodCalenderStack':
               IconComponent = focused ? MoodColor : MoodGray;
               break;
-            case 'AddPostStack':
-              IconComponent = focused ? AddColor : AddGray;
-              break;
+            // case 'AddPostStack':
+            //   IconComponent = focused ? AddColor : AddGray;
+            //   break;
             default:
               IconComponent = () => null;
               break;
@@ -74,8 +75,12 @@ export const BottomTab = ({navigation}:BottomTabProps): React.JSX.Element => {
       />
       <Tab.Screen
         name="AddPostStack"
-        component={AddPostStack}
-        options={{headerShown: false}}
+        component={EmptyComponent}
+        options={{
+          tabBarButton: (props) => (
+            <AddPostButton {...props} onPress={() => navigation.navigate('AddPost')} />
+          ),
+        }}
       />
       <Tab.Screen
         name="MoodCalenderStack"
@@ -95,6 +100,17 @@ export const BottomTab = ({navigation}:BottomTabProps): React.JSX.Element => {
   );
 };
 
+const EmptyComponent = () => null;
+
+const AddPostButton = ({ onPress }:any) => (
+  <TouchableOpacity
+    style={styles.addButton}
+    onPress={onPress}
+  >
+    <AddColor />
+  </TouchableOpacity>
+);
+
 const RootStack = createNativeStackNavigator();
 
 type BottomTabWithModalProps=NativeStackScreenProps<RootStackParamList,'BottomTabWithModals'>
@@ -112,6 +128,14 @@ export const BottomTabWithModals = ({navigation}:BottomTabWithModalProps) => (
       options={{
         headerShown: false,
         presentation: 'modal',
+      }}
+    />
+    <RootStack.Screen
+      name="AddPost"
+      component={AddPost}
+      options={{
+        headerShown: false,
+        presentation: 'modal'
       }}
     />
   </RootStack.Navigator>
@@ -140,5 +164,14 @@ const styles = StyleSheet.create({
     right: 0,
     elevation: 0,
     backgroundColor: '#252525',
+  },
+  addButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#252525',
+    marginTop: 5
   },
 });
