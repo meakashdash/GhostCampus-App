@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {
+  Image,
   InputAccessoryView,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -16,6 +18,8 @@ import {RootStackParamList} from '../../App';
 import Toast from 'react-native-toast-message';
 import {toastConfig} from '../components/toast/ToastConfig';
 import InputAccessory from '../components/addpost/InputAccessory';
+import {ImageLibraryOptions, launchImageLibrary} from 'react-native-image-picker';
+import Video from 'react-native-video';
 
 const INPUT_ACCESSORY_VIEW_ID = '12e42ww44w2';
 
@@ -27,6 +31,9 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
   const [titleHeight, setTitleHeight] = useState(0);
   const [bodyHeight, setBodyHeight] = useState(0);
   const [keyBoardVisible, setKeyBoardVisible] = useState(false);
+  const [image, setImage] = useState('');
+  const [video, setVideo] = useState('');
+  const [fileName,setFileName] = useState('');
   useEffect(() => {
     const keyBoardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -66,17 +73,80 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
   const handleChangeBody = (text: string) => {
     setBody(text);
   };
-  const handleImagePress = () => {
-    console.log('Image pressed');
+  const handleImagePress = async () => {
+    const options: ImageLibraryOptions = {
+      mediaType: 'photo',
+      includeBase64: false,
+      maxHeight: 2000,
+      maxWidth: 2000,
+    };
+
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+          console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+          console.log('ImagePicker Error: ', response.errorMessage);
+      } else if (response.assets && response.assets[0].uri) {
+          setImage(response.assets[0].uri);
+          setFileName(response.assets[0].fileName || '');
+      }
+    });
   };
 
   const handleVideoPress = () => {
-    console.log('Video pressed');
+    const options: ImageLibraryOptions = {
+      mediaType: 'video',
+      includeBase64: false,
+      videoQuality: 'medium',
+    };
+
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+          console.log('User cancelled video picker');
+      } else if (response.errorCode) {
+          console.log('VideoPicker Error: ', response.errorMessage);
+      } else if (response.assets && response.assets[0].uri) {
+          setVideo(response.assets[0].uri);
+          setFileName(response.assets[0].fileName || '');
+      }
+    });
   };
 
   const handlePollPress = () => {
     console.log('Poll pressed');
   };
+
+  const handleRemoveImage= () => {
+    setImage('');
+    setFileName('');
+  }
+
+  const handleRemoveVideo= () => {
+    setVideo('');
+    setFileName('');
+  }
+
+  const renderMediaPreview=()=>(
+      <View style={styles.mediaPreviewContainer}>
+        {image ? (
+          <View style={styles.previewItem}>
+            <Image source={{uri:image}} style={styles.previewImage}/>
+            <TouchableOpacity style={styles.deleteButton} onPress={handleRemoveImage}>
+              <Text style={styles.deleteButtonText}><Cross /></Text>
+            </TouchableOpacity>
+          </View>
+        ):null}
+        {video ? (
+          <View style={styles.previewItem}>
+            <Video source={{uri: video}} style={styles.previewVideo} />
+            <TouchableOpacity style={styles.deleteButton} onPress={handleRemoveVideo}>
+              <Text style={styles.deleteButtonText}><Cross /></Text>
+            </TouchableOpacity>
+          </View>
+        ):null}
+      </View>
+    )
+
   const renderInputAccessory = () => (
     <View style={styles.inputAccessoryContainer}>
       <InputAccessory
@@ -96,6 +166,9 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
         <View style={styles.crossContainer}>
           <TouchableOpacity onPress={handleGoBack}>
             <Cross />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleGoBack} style={styles.postButton}>
+            <Text style={styles.postButtonText}>Post</Text>
           </TouchableOpacity>
         </View>
         <View>
@@ -135,14 +208,15 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
             }
           />
         </View>
-        {renderInputAccessory()}
+        {renderMediaPreview()}
+        {!image && !video && renderInputAccessory()}
         {Platform.OS === 'ios' && (
           <InputAccessoryView nativeID={INPUT_ACCESSORY_VIEW_ID}>
-            {renderInputAccessory()}
+            {!image && !video && renderInputAccessory()}
           </InputAccessoryView>
         )}
         {Platform.OS === 'android' &&
-          (keyBoardVisible || !keyBoardVisible) &&
+          (keyBoardVisible || !keyBoardVisible) && !image && !video &&
           renderInputAccessory()}
       </KeyboardAvoidingView>
       <Toast config={toastConfig} />
@@ -162,7 +236,6 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 23,
     padding: 10,
-    marginTop: 5,
     fontFamily: 'Montserrat-Bold',
   },
   bodyContainer: {
@@ -176,9 +249,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   crossContainer: {
-    display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 10,
     marginTop: 8,
   },
@@ -188,4 +261,53 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
+  mediaPreviewContainer:{
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding: 10,
+  },
+  previewItem:{
+    width: 150,
+    height: 150,
+    margin: 5,
+    position: 'relative',
+  },
+  previewImage:{
+    width: '100%',
+    height: '100%',
+    borderRadius: 5,
+  },
+  deleteButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 10,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deleteButtonText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  previewVideo:{
+    width: '100%',
+    height: '100%',
+    borderRadius: 5,
+  },
+  postButton:{
+    backgroundColor: '#B20000',
+    width: 60,
+    height: 30,
+    borderRadius: 15,
+  },
+  postButtonText:{
+    color: '#F4F4F4',
+    fontFamily:'Montserrat-Bold',
+    textAlign: 'center',
+    lineHeight: 30,
+  }
 });
