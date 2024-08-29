@@ -58,6 +58,26 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
   const [token, setToken] = useRecoilState(tokenState);
   const [loading, setLoading] = useState(false);
   const spinValue = useRef(new Animated.Value(0)).current;
+  const [videoDimensions, setVideoDimensions] = useState({ width: 0, height: 0 });
+  const handleVideoLoad = (data:any) => {
+    const { width, height } = data.naturalSize;
+    const aspectRatio = width / height;
+
+    const maxWidth = 300;
+    const maxHeight = 300;
+
+    if (width > height) {
+      setVideoDimensions({
+        width: maxWidth,
+        height: maxWidth / aspectRatio,
+      });
+    } else {
+      setVideoDimensions({
+        width: maxHeight * aspectRatio,
+        height: maxHeight,
+      });
+    }
+  };
   useEffect(() => {
     const keyBoardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -264,7 +284,7 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
     <View style={styles.mediaPreviewContainer}>
       {image ? (
         <View style={styles.previewItem}>
-          <Image source={{uri: image}} style={styles.previewImage} />
+          <Image source={{uri: image}} style={[styles.previewImage,{width:150,height:150}]} />
           <TouchableOpacity
             style={styles.deleteButton}
             onPress={handleRemoveImage}>
@@ -276,7 +296,7 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
       ) : null}
       {video ? (
         <View style={styles.previewItem}>
-          <Video source={{uri: video}} style={styles.previewVideo} />
+          <Video source={{uri: video}} style={[styles.previewVideo, videoDimensions]} onLoad={handleVideoLoad} resizeMode="contain"/>
           <TouchableOpacity
             style={styles.deleteButton}
             onPress={handleRemoveVideo}>
@@ -456,8 +476,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   previewItem: {
-    width: 150,
-    height: 150,
     margin: 5,
     position: 'relative',
   },
@@ -483,8 +501,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   previewVideo: {
-    width: '100%',
-    height: '100%',
     borderRadius: 5,
   },
   postButton: {
