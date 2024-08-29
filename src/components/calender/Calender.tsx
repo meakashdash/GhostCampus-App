@@ -21,8 +21,6 @@ import {tokenState} from '../../context/userContext';
 const { width, height } = Dimensions.get('window');
 
 const Calender = (): React.JSX.Element => {
-  console.log('width',width);
-  console.log(height);
   const [date, setDate] = useState(new Date());
   const [moods, setMoods] = useState([]);
   const [loading, setLoading] = useState(false);

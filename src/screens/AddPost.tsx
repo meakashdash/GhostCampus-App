@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -14,6 +14,8 @@ import {
   TouchableOpacity,
   View,
   TouchableWithoutFeedback,
+  Animated,
+  Easing,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Cross from '../../assets/icons/add-post/Cross';
@@ -30,8 +32,8 @@ import Video from 'react-native-video';
 import axios from 'axios';
 import {baseUrl} from '../URL';
 import Tag from '../components/Tag';
-import { useRecoilState } from 'recoil';
-import { tokenState } from '../context/userContext';
+import {useRecoilState} from 'recoil';
+import {tokenState} from '../context/userContext';
 
 const INPUT_ACCESSORY_VIEW_ID = '12e42ww44w2';
 
@@ -53,7 +55,9 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
   const [selectedTagText, setSelectedTagText] = useState<any>('');
   const [selectedTagColor, setSelectedTagColor] = useState<any>('');
   const [selectedTagId, setSelectedTagId] = useState<any>('');
-  const [token,setToken]=useRecoilState(tokenState);
+  const [token, setToken] = useRecoilState(tokenState);
+  const [loading, setLoading] = useState(false);
+  const spinValue = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     const keyBoardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -73,6 +77,19 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
       keyBoardDidHideListener.remove();
     };
   }, []);
+  const startSpinAnimation = () => {
+    spinValue.setValue(0);
+    Animated.timing(spinValue, {
+      toValue: 1,
+      duration: 1000,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start(animation => {
+      if (animation.finished && loading) {
+        startSpinAnimation();
+      }
+    });
+  };
   const handleGoBack = () => {
     navigation.goBack();
   };
@@ -148,41 +165,59 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
 
   const handlePostMedia = async () => {
     try {
+      if (!title || !body || !selectedTagId) {
+        Toast.show({
+          type: 'error',
+          text1: 'Missing Fields',
+          text2: 'Please ensure the title, description, and tag are selected.',
+          position: 'top',
+          visibilityTime: 4000,
+          topOffset: 20,
+        });
+        return;
+      }
       const formData = new FormData();
+      setLoading(true);
+      startSpinAnimation();
       formData.append('title', title);
       formData.append('description', body);
-      if(image){
-        formData.append('image', {
+      if (image) {
+        formData.append('images', {
           uri: image,
           type: 'image/jpeg',
           name: fileName || 'image.jpg',
         });
       }
-      if(video){
-        formData.append('video', {
+      if (video) {
+        formData.append('videos', {
           uri: video,
           type: 'video/mp4',
           name: fileName || 'video.mp4',
         });
       }
-      if(selectedTagId){
-        formData.append('tag',selectedTagId);
+      if (selectedTagId) {
+        formData.append('tagId', selectedTagId);
       }
       const response = await axios.post(`${baseUrl}/post/create`, formData, {
         headers: {
-          'Authorization':token,
+          Authorization: token,
           'Content-Type': 'multipart/form-data',
         },
       });
-      if(response.data.statusCode===200){
-        ToastAndroid.show(response.data.message,ToastAndroid.SHORT);
-        navigation.replace('HomeScreen');
-      }else{
-        ToastAndroid.show(response.data.message,ToastAndroid.SHORT);
+      setLoading(false);
+      if (response.data.statusCode === 200) {
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+        navigation.replace('BottomTabWithModals');
+      } else {
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
       }
     } catch (error) {
+      setLoading(false);
       console.error('Error posting media:', error);
-      ToastAndroid.show('An error occurred while posting. Please try again.', ToastAndroid.SHORT);
+      ToastAndroid.show(
+        'An error occurred while posting. Please try again.',
+        ToastAndroid.SHORT,
+      );
     }
   };
 
@@ -205,12 +240,25 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
     setModalVisible(false);
   };
 
-  const handleTagSelect=(tag:any)=>{
+  const handleTagSelect = (tag: any) => {
     setSelectedTagColor(tag.color);
     setSelectedTagText(tag.text);
     setSelectedTagId(tag._id);
     setModalVisible(false);
-  }
+  };
+
+  const LoaderIcon = () => {
+    const spin = spinValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['0deg', '360deg'],
+    });
+
+    return (
+      <Animated.View style={{transform: [{rotate: spin}]}}>
+        <View style={styles.loaderIcon} />
+      </Animated.View>
+    );
+  };
 
   const renderMediaPreview = () => (
     <View style={styles.mediaPreviewContainer}>
@@ -263,18 +311,14 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <View style={styles.moodContainer}>
-            {tags?.map((tag: any) => (
-              <TouchableOpacity
-                key={tag._id}
-                style={[
-                  styles.tagButton,
-                  {backgroundColor: tag.color},
-                ]}
-                onPress={()=>handleTagSelect(tag)}
-                >
-                <Text style={styles.tagButtonText}>{tag.text}</Text>
-              </TouchableOpacity>
-            ))}
+              {tags?.map((tag: any) => (
+                <TouchableOpacity
+                  key={tag._id}
+                  style={[styles.tagButton, {backgroundColor: tag.color}]}
+                  onPress={() => handleTagSelect(tag)}>
+                  <Text style={styles.tagButtonText}>{tag.text}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
         </View>
@@ -292,7 +336,11 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
             <Cross />
           </TouchableOpacity>
           <TouchableOpacity onPress={handlePostMedia} style={styles.postButton}>
-            <Text style={styles.postButtonText}>Post</Text>
+            {loading ? (
+              <LoaderIcon />
+            ) : (
+              <Text style={styles.postButtonText}>Post</Text>
+            )}
           </TouchableOpacity>
         </View>
         <View>
@@ -331,8 +379,19 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
               Platform.OS === 'ios' ? INPUT_ACCESSORY_VIEW_ID : undefined
             }
           />
-          <TouchableOpacity style={[styles.tagContainer,{backgroundColor:`${selectedTagColor?selectedTagColor:'#888'}`}]} onPress={showModal}>
-            <Text style={styles.tagText}>{selectedTagText?selectedTagText:'Tags'}</Text>
+          <TouchableOpacity
+            style={[
+              styles.tagContainer,
+              {
+                backgroundColor: `${
+                  selectedTagColor ? selectedTagColor : '#888'
+                }`,
+              },
+            ]}
+            onPress={showModal}>
+            <Text style={styles.tagText}>
+              {selectedTagText ? selectedTagText : 'Tags'}
+            </Text>
           </TouchableOpacity>
         </View>
         {renderMediaPreview()}
@@ -433,6 +492,8 @@ const styles = StyleSheet.create({
     width: 60,
     height: 30,
     borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   postButtonText: {
     color: '#F4F4F4',
@@ -447,13 +508,14 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     borderRadius: 25,
     marginTop: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   tagText: {
     color: '#ffffff',
     fontFamily: 'Montserrat-Medium',
     fontSize: 15,
     textAlign: 'center',
-    top: 3,
   },
   modalContainer: {
     flex: 1,
@@ -487,5 +549,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Medium',
     fontSize: 14,
     textAlign: 'center',
+  },
+  loaderIcon: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#F4F4F4',
+    borderTopColor: 'transparent',
   },
 });
