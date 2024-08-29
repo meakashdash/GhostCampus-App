@@ -1,15 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {
+  Dimensions,
   Image,
   InputAccessoryView,
   Keyboard,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Cross from '../../assets/icons/add-post/Cross';
@@ -18,10 +22,18 @@ import {RootStackParamList} from '../../App';
 import Toast from 'react-native-toast-message';
 import {toastConfig} from '../components/toast/ToastConfig';
 import InputAccessory from '../components/addpost/InputAccessory';
-import {ImageLibraryOptions, launchImageLibrary} from 'react-native-image-picker';
+import {
+  ImageLibraryOptions,
+  launchImageLibrary,
+} from 'react-native-image-picker';
 import Video from 'react-native-video';
+import axios from 'axios';
+import {baseUrl} from '../URL';
+import Tag from '../components/Tag';
 
 const INPUT_ACCESSORY_VIEW_ID = '12e42ww44w2';
+
+const {width, height} = Dimensions.get('window');
 
 type AddPostStackProps = NativeStackScreenProps<RootStackParamList, 'AddPost'>;
 
@@ -33,7 +45,11 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
   const [keyBoardVisible, setKeyBoardVisible] = useState(false);
   const [image, setImage] = useState('');
   const [video, setVideo] = useState('');
-  const [fileName,setFileName] = useState('');
+  const [fileName, setFileName] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [tags, setTags] = useState<any>();
+  const [selectedTagText, setSelectedTagText] = useState<any>('');
+  const [selectedTagColor, setSelectedTagColor] = useState<any>('');
   useEffect(() => {
     const keyBoardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -81,14 +97,14 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
       maxWidth: 2000,
     };
 
-    launchImageLibrary(options, (response) => {
+    launchImageLibrary(options, response => {
       if (response.didCancel) {
-          console.log('User cancelled image picker');
+        console.log('User cancelled image picker');
       } else if (response.errorCode) {
-          console.log('ImagePicker Error: ', response.errorMessage);
+        console.log('ImagePicker Error: ', response.errorMessage);
       } else if (response.assets && response.assets[0].uri) {
-          setImage(response.assets[0].uri);
-          setFileName(response.assets[0].fileName || '');
+        setImage(response.assets[0].uri);
+        setFileName(response.assets[0].fileName || '');
       }
     });
   };
@@ -100,14 +116,14 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
       videoQuality: 'medium',
     };
 
-    launchImageLibrary(options, (response) => {
+    launchImageLibrary(options, response => {
       if (response.didCancel) {
-          console.log('User cancelled video picker');
+        console.log('User cancelled video picker');
       } else if (response.errorCode) {
-          console.log('VideoPicker Error: ', response.errorMessage);
+        console.log('VideoPicker Error: ', response.errorMessage);
       } else if (response.assets && response.assets[0].uri) {
-          setVideo(response.assets[0].uri);
-          setFileName(response.assets[0].fileName || '');
+        setVideo(response.assets[0].uri);
+        setFileName(response.assets[0].fileName || '');
       }
     });
   };
@@ -116,36 +132,74 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
     console.log('Poll pressed');
   };
 
-  const handleRemoveImage= () => {
+  const handleRemoveImage = () => {
     setImage('');
     setFileName('');
-  }
+  };
 
-  const handleRemoveVideo= () => {
+  const handleRemoveVideo = () => {
     setVideo('');
     setFileName('');
+  };
+
+  const handlePostMedia = async () => {
+    try {
+    } catch (error) {}
+  };
+
+  const showModal = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/tag`);
+      if (response.data.statusCode === 200) {
+        setTags(response?.data?.tags);
+      } else {
+        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+      }
+      setModalVisible(true);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+
+  const handleTagSelect=(tag:any)=>{
+    setSelectedTagColor(tag.color);
+    setSelectedTagText(tag.text);
+    setModalVisible(false);
   }
 
-  const renderMediaPreview=()=>(
-      <View style={styles.mediaPreviewContainer}>
-        {image ? (
-          <View style={styles.previewItem}>
-            <Image source={{uri:image}} style={styles.previewImage}/>
-            <TouchableOpacity style={styles.deleteButton} onPress={handleRemoveImage}>
-              <Text style={styles.deleteButtonText}><Cross /></Text>
-            </TouchableOpacity>
-          </View>
-        ):null}
-        {video ? (
-          <View style={styles.previewItem}>
-            <Video source={{uri: video}} style={styles.previewVideo} />
-            <TouchableOpacity style={styles.deleteButton} onPress={handleRemoveVideo}>
-              <Text style={styles.deleteButtonText}><Cross /></Text>
-            </TouchableOpacity>
-          </View>
-        ):null}
-      </View>
-    )
+  const renderMediaPreview = () => (
+    <View style={styles.mediaPreviewContainer}>
+      {image ? (
+        <View style={styles.previewItem}>
+          <Image source={{uri: image}} style={styles.previewImage} />
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={handleRemoveImage}>
+            <Text style={styles.deleteButtonText}>
+              <Cross />
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
+      {video ? (
+        <View style={styles.previewItem}>
+          <Video source={{uri: video}} style={styles.previewVideo} />
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={handleRemoveVideo}>
+            <Text style={styles.deleteButtonText}>
+              <Cross />
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
+    </View>
+  );
 
   const renderInputAccessory = () => (
     <View style={styles.inputAccessoryContainer}>
@@ -156,18 +210,48 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
       />
     </View>
   );
+
+  const renderModal = () => (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={() => {
+        setModalVisible(!modalVisible);
+      }}>
+      <TouchableWithoutFeedback onPress={handleCloseModal}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <View style={styles.moodContainer}>
+            {tags?.map((tag: any) => (
+              <TouchableOpacity
+                key={tag._id}
+                style={[
+                  styles.tagButton,
+                  {backgroundColor: tag.color},
+                ]}
+                onPress={()=>handleTagSelect(tag)}
+                >
+                <Text style={styles.tagButtonText}>{tag.text}</Text>
+              </TouchableOpacity>
+            ))}
+            </View>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
   return (
     <SafeAreaView style={styles.safeContainer}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 40}
-      >
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 40}>
         <View style={styles.crossContainer}>
           <TouchableOpacity onPress={handleGoBack}>
             <Cross />
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleGoBack} style={styles.postButton}>
+          <TouchableOpacity onPress={handlePostMedia} style={styles.postButton}>
             <Text style={styles.postButtonText}>Post</Text>
           </TouchableOpacity>
         </View>
@@ -207,8 +291,12 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
               Platform.OS === 'ios' ? INPUT_ACCESSORY_VIEW_ID : undefined
             }
           />
+          <TouchableOpacity style={[styles.tagContainer,{backgroundColor:`${selectedTagColor?selectedTagColor:'#888'}`}]} onPress={showModal}>
+            <Text style={styles.tagText}>{selectedTagText?selectedTagText:'Tags'}</Text>
+          </TouchableOpacity>
         </View>
         {renderMediaPreview()}
+        {modalVisible && renderModal()}
         {!image && !video && renderInputAccessory()}
         {Platform.OS === 'ios' && (
           <InputAccessoryView nativeID={INPUT_ACCESSORY_VIEW_ID}>
@@ -216,7 +304,9 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
           </InputAccessoryView>
         )}
         {Platform.OS === 'android' &&
-          (keyBoardVisible || !keyBoardVisible) && !image && !video &&
+          (keyBoardVisible || !keyBoardVisible) &&
+          !image &&
+          !video &&
           renderInputAccessory()}
       </KeyboardAvoidingView>
       <Toast config={toastConfig} />
@@ -261,18 +351,18 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-  mediaPreviewContainer:{
+  mediaPreviewContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     padding: 10,
   },
-  previewItem:{
+  previewItem: {
     width: 150,
     height: 150,
     margin: 5,
     position: 'relative',
   },
-  previewImage:{
+  previewImage: {
     width: '100%',
     height: '100%',
     borderRadius: 5,
@@ -293,21 +383,69 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
   },
-  previewVideo:{
+  previewVideo: {
     width: '100%',
     height: '100%',
     borderRadius: 5,
   },
-  postButton:{
+  postButton: {
     backgroundColor: '#B20000',
     width: 60,
     height: 30,
     borderRadius: 15,
   },
-  postButtonText:{
+  postButtonText: {
     color: '#F4F4F4',
-    fontFamily:'Montserrat-Bold',
+    fontFamily: 'Montserrat-Bold',
     textAlign: 'center',
     lineHeight: 30,
-  }
+  },
+  tagContainer: {
+    backgroundColor: '#888',
+    width: 100,
+    height: 30,
+    marginLeft: 10,
+    borderRadius: 25,
+    marginTop: 5,
+  },
+  tagText: {
+    color: '#ffffff',
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 15,
+    textAlign: 'center',
+    top: 3,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#2C2C2E',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: width * 0.044,
+    paddingVertical: height * 0.021,
+  },
+  moodContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    borderRadius: 25,
+    paddingHorizontal: 0.022,
+    paddingVertical: 0.01,
+    marginBottom: 20,
+  },
+  tagButton: {
+    borderRadius: 15,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    margin: 5,
+  },
+  tagButtonText: {
+    color: '#fff',
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 14,
+    textAlign: 'center',
+  },
 });
