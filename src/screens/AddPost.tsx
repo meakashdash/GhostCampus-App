@@ -30,6 +30,8 @@ import Video from 'react-native-video';
 import axios from 'axios';
 import {baseUrl} from '../URL';
 import Tag from '../components/Tag';
+import { useRecoilState } from 'recoil';
+import { tokenState } from '../context/userContext';
 
 const INPUT_ACCESSORY_VIEW_ID = '12e42ww44w2';
 
@@ -50,6 +52,8 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
   const [tags, setTags] = useState<any>();
   const [selectedTagText, setSelectedTagText] = useState<any>('');
   const [selectedTagColor, setSelectedTagColor] = useState<any>('');
+  const [selectedTagId, setSelectedTagId] = useState<any>('');
+  const [token,setToken]=useRecoilState(tokenState);
   useEffect(() => {
     const keyBoardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -144,7 +148,42 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
 
   const handlePostMedia = async () => {
     try {
-    } catch (error) {}
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', body);
+      if(image){
+        formData.append('image', {
+          uri: image,
+          type: 'image/jpeg',
+          name: fileName || 'image.jpg',
+        });
+      }
+      if(video){
+        formData.append('video', {
+          uri: video,
+          type: 'video/mp4',
+          name: fileName || 'video.mp4',
+        });
+      }
+      if(selectedTagId){
+        formData.append('tag',selectedTagId);
+      }
+      const response = await axios.post(`${baseUrl}/post/create`, formData, {
+        headers: {
+          'Authorization':token,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if(response.data.statusCode===200){
+        ToastAndroid.show(response.data.message,ToastAndroid.SHORT);
+        navigation.replace('HomeScreen');
+      }else{
+        ToastAndroid.show(response.data.message,ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      console.error('Error posting media:', error);
+      ToastAndroid.show('An error occurred while posting. Please try again.', ToastAndroid.SHORT);
+    }
   };
 
   const showModal = async () => {
@@ -169,6 +208,7 @@ export const AddPost = ({navigation}: AddPostStackProps): React.JSX.Element => {
   const handleTagSelect=(tag:any)=>{
     setSelectedTagColor(tag.color);
     setSelectedTagText(tag.text);
+    setSelectedTagId(tag._id);
     setModalVisible(false);
   }
 
