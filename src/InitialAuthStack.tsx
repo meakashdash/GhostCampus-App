@@ -15,6 +15,7 @@ import { useRecoilState } from 'recoil';
 import { visibleComment } from './context/userContext';
 import MoodCalender from './screens/MoodCalender';
 import MarketItem from './screens/MarketItem';
+import AddItemScreen from './components/market/AddItemScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const InitialAuthStack = () => {

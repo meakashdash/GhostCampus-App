@@ -33,7 +33,7 @@ export const Splash: React.FC<SplashProps> = ({navigation}: SplashProps) => {
         navigation.replace('BottomTabWithModals')
       }
     } catch (error) {
-      console.error('Error checking token:', error);
+      console.error('Error checking token:', JSON.stringify(error));
     }
   };
 

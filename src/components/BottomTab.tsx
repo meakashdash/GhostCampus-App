@@ -17,6 +17,7 @@ import MoodColor from '../../assets/icons/bottombar/MoodColor';
 import MoodGray from '../../assets/icons/bottombar/MoodGray';
 import MarketItem from '../screens/MarketItem';
 import { AddPost } from '../screens/AddPost';
+import AddItemScreen from './market/AddItemScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -137,6 +138,11 @@ export const BottomTabWithModals = ({navigation}:BottomTabWithModalProps) => (
         headerShown: false,
         presentation: 'modal'
       }}
+    />
+    <RootStack.Screen
+        name='AddItemScreen'
+        component={AddItemScreen}
+        options={{headerShown:false,presentation: 'modal'}}
     />
   </RootStack.Navigator>
 );

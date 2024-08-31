@@ -131,7 +131,7 @@ export const Market = ({navigation}:MarketProps) => {
   }
   return (
     <SafeAreaView style={styles.container}>
-      <MarketPicker setSelectedCategory={setSelectedCategory} />
+      <MarketPicker setSelectedCategory={setSelectedCategory} navigation={navigation} isAddButtonVisible={true}/>
       {loading && items.length === 0 ? (
         <View style={styles.fullScreenLoader}>
           <ActivityIndicator size="large" color="#B20000" />
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   },
   fullScreenLoader:{
     flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });
