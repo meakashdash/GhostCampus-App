@@ -10,6 +10,7 @@ import {
   Modal,
   FlatList,
   ScrollView,
+  Image,
 } from 'react-native';
 import ItemCamera from '../../../assets/icons/market/ItemCamera';
 import axios from 'axios';
@@ -19,6 +20,10 @@ import { tokenState } from '../../context/userContext';
 import DownIcon from '../../../assets/icons/market/DownIcon';
 import BigDownIcon from '../../../assets/icons/market/BigDownIcon';
 import AddItem from '../../../assets/icons/market/AddItem';
+import {
+  ImageLibraryOptions,
+  launchImageLibrary,
+} from 'react-native-image-picker';
 
 interface Category {
   _id: string;
@@ -48,6 +53,8 @@ const AddItemScreen = () => {
   const [dropdownOptions, setDropdownOptions] = useState<string[]>([]);
   const [currentDropdownLabel, setCurrentDropdownLabel] = useState<string | null>(null);
   const [dropdownModalVisible, setDropdownModalVisible] = useState(false);
+  const [image, setImage] = useState('');
+  const [fileName, setFileName] = useState('');
 
   useEffect(() => {
     getCategories();
@@ -58,6 +65,26 @@ const AddItemScreen = () => {
       getChildCategories(selectedParentCategory._id);
     }
   }, [selectedParentCategory]);
+
+  const handleImagePress = async () => {
+    const options: ImageLibraryOptions = {
+      mediaType: 'photo',
+      includeBase64: false,
+      maxHeight: 2000,
+      maxWidth: 2000,
+    };
+
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.log('ImagePicker Error: ', response.errorMessage);
+      } else if (response.assets && response.assets[0].uri) {
+        setImage(response.assets[0].uri);
+        setFileName(response.assets[0].fileName || '');
+      }
+    });
+  };
 
   const getCategories = async () => {
     try {
@@ -96,8 +123,6 @@ const AddItemScreen = () => {
     }
     setPrice(text.replace(/[^0-9]/g, ''));
   };
-
-  const uploadImage = () => {};
 
   const openPicker = (isParent: boolean) => {
     setIsParentPicker(isParent);
@@ -195,8 +220,8 @@ const AddItemScreen = () => {
     <SafeAreaView style={styles.safeContainer}>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <View style={styles.container}>
-          <TouchableOpacity style={styles.cameraContainer} onPress={uploadImage}>
-            <ItemCamera />
+          <TouchableOpacity style={styles.cameraContainer} onPress={handleImagePress}>
+            {image ? <Image source={{uri:image}} style={styles.previewImage}/>:<ItemCamera />}
           </TouchableOpacity>
           <Text style={styles.uploadImageText}>Upload Image</Text>
           <TextInput
@@ -446,6 +471,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Montserrat-Medium',
   },
+  previewImage:{
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  }
 });
 
 export default AddItemScreen;
