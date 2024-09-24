@@ -168,6 +168,47 @@ const AddItemScreen = () => {
     }
   };
 
+  const handleAddItem=async()=>{
+    try {
+      if (!title.trim()) {
+        ToastAndroid.show('Please enter a title', ToastAndroid.SHORT);
+        return;
+      }
+      if (!description.trim()) {
+        ToastAndroid.show('Please enter a description', ToastAndroid.SHORT);
+        return;
+      }
+      if (!price.trim()) {
+        ToastAndroid.show('Please enter a price', ToastAndroid.SHORT);
+        return;
+      }
+      if (!selectedParentCategory) {
+        ToastAndroid.show('Please select a category', ToastAndroid.SHORT);
+        return;
+      }
+      if (!selectedChildCategory) {
+        ToastAndroid.show('Please select a subcategory', ToastAndroid.SHORT);
+        return;
+      }
+      if (!image) {
+        ToastAndroid.show('Please upload an image', ToastAndroid.SHORT);
+        return;
+      }
+
+      if (selectedChildCategory.attributes) {
+        for (const attribute of selectedChildCategory.attributes) {
+          if (!attributeValues[attribute.label]) {
+            ToastAndroid.show(`Please fill in ${attribute.label}`, ToastAndroid.SHORT);
+            return;
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error adding item:', error);
+      ToastAndroid.show('An error occurred while adding the item', ToastAndroid.SHORT);
+    }
+  }
+
   const renderAttributes = () => {
     return selectedChildCategory?.attributes.map((attribute: any) => {
       const { label, datatype, value, unit } = attribute;
@@ -270,6 +311,9 @@ const AddItemScreen = () => {
               {renderAttributes()}
             </View>
           )}
+          <TouchableOpacity onPress={handleAddItem} style={styles.addItemStyle}>
+            <Text style={styles.addItemTextStyle}>Add</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
       
@@ -475,6 +519,21 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
+  },
+  addItemStyle:{
+    backgroundColor: '#B20000',
+    width: 130,
+    height: 40,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop:20
+  },
+  addItemTextStyle:{
+    color: '#F4F4F4',
+    fontFamily: 'Montserrat-Bold',
+    textAlign: 'center',
+    lineHeight: 30,
   }
 });
 
