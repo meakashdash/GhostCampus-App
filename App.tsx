@@ -23,6 +23,7 @@ export type RootStackParamList = {
   Market:undefined;
   MarketItem:{_id:string,isLiked:boolean};
   AddPost:undefined;
+  AddItemScreen:undefined;
 };
 
 function App() {

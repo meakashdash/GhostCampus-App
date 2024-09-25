@@ -24,6 +24,8 @@ import {
   ImageLibraryOptions,
   launchImageLibrary,
 } from 'react-native-image-picker';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../../App';
 
 interface Category {
   _id: string;
@@ -38,7 +40,9 @@ interface ChildCategory {
   attributes: any;
 }
 
-const AddItemScreen = () => {
+type AddItemScreenStackProps = NativeStackScreenProps<RootStackParamList, 'AddItemScreen'>;
+
+const AddItemScreen = ({navigation}:AddItemScreenStackProps) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -55,6 +59,8 @@ const AddItemScreen = () => {
   const [dropdownModalVisible, setDropdownModalVisible] = useState(false);
   const [image, setImage] = useState('');
   const [fileName, setFileName] = useState('');
+  const [campus,setCampus]=useState('');
+  const [building,setBuilding]=useState('');
 
   useEffect(() => {
     getCategories();
@@ -124,6 +130,14 @@ const AddItemScreen = () => {
     setPrice(text.replace(/[^0-9]/g, ''));
   };
 
+  const handleChangeCampus = (text: string) => {
+    setCampus(text);
+  }
+
+  const handleChangeBuilding = (text: string) => {
+    setBuilding(text);
+  }
+
   const openPicker = (isParent: boolean) => {
     setIsParentPicker(isParent);
     setModalVisible(true);
@@ -170,6 +184,16 @@ const AddItemScreen = () => {
 
   const handleAddItem=async()=>{
     try {
+      // console.log(
+      //   title,
+      //   description,
+      //   price,
+      //   selectedChildCategory._id,
+      //   attributeValues,
+      //   image,
+      //   campus,
+      //   building
+      // );
       if (!title.trim()) {
         ToastAndroid.show('Please enter a title', ToastAndroid.SHORT);
         return;
@@ -202,6 +226,44 @@ const AddItemScreen = () => {
             return;
           }
         }
+      }
+
+      //add for submit
+      const formData = new FormData();
+      formData.append('categoryId', selectedChildCategory._id);
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('price', price);
+      formData.append('attributes', JSON.stringify(attributeValues));
+      formData.append('campus', campus);
+      formData.append('building', building);
+      formData.append('images', {
+        uri: image,
+        type: 'image/jpeg',
+        name: fileName || 'image.jpg',
+      });
+      const response=await axios.post(`${baseUrl}/market`,formData,{
+        headers:{
+          Authorization:token,
+          'Content-Type':'multipart/form-data'
+        }
+      })
+
+      if(response.data.statusCode===200){
+        ToastAndroid.show('Item added successfully', ToastAndroid.SHORT);
+        setTitle('');
+        setDescription('');
+        setPrice('');
+        setSelectedParentCategory(null);
+        setSelectedChildCategory(null);
+        setAttributeValues({});
+        setImage('');
+        setFileName('');
+        setCampus('');
+        setBuilding('');
+        navigation.navigate('Market');	
+      }else{
+        ToastAndroid.show('An error occurred while adding the itemccc', ToastAndroid.SHORT);
       }
     } catch (error) {
       console.error('Error adding item:', error);
@@ -286,6 +348,20 @@ const AddItemScreen = () => {
             value={price}
             keyboardType="numeric"
             onChangeText={handleChangePrice}
+          />
+          <TextInput
+            style={styles.titleConatiner}
+            placeholder="Campus"
+            placeholderTextColor="#888"
+            value={campus}
+            onChangeText={handleChangeCampus}
+          />
+          <TextInput
+            style={styles.titleConatiner}
+            placeholder="Building"
+            placeholderTextColor="#888"
+            value={building}
+            onChangeText={handleChangeBuilding}
           />
           <View style={styles.pickerContainer}>
             <TouchableOpacity style={styles.pickerButton} onPress={() => openPicker(true)}>
