@@ -16,7 +16,7 @@ type MarketProps=NativeStackScreenProps<RootStackParamList,'Market'>
 
 interface Item {
   _id: string;
-  image: string;
+  media: {images: [string]};
   title: string;
   categoryName: string;
   price: number;
@@ -35,6 +35,7 @@ export const Market = ({navigation}:MarketProps) => {
 
   useEffect(()=>{
     if (selectedCategory) {
+      console.log('selectedCategory',selectedCategory);
       setCurrentPage(1);
       setItems([]);
       getChildCategoryItems(selectedCategory);
@@ -43,17 +44,17 @@ export const Market = ({navigation}:MarketProps) => {
       setItems([]);
       getItems();
     }
-  },[selectedCategory])
+  },[selectedCategory,currentPage])
 
-  useEffect(() => {
-    if (currentPage > 1) {
-      if (selectedCategory) {
-        getChildCategoryItems(selectedCategory);
-      } else {
-        getItems();
-      }
-    }
-  }, [currentPage]);
+  // useEffect(() => {
+  //   if (currentPage > 1) {
+  //     if (selectedCategory) {
+  //       getChildCategoryItems(selectedCategory);
+  //     } else {
+  //       getItems();
+  //     }
+  //   }
+  // }, [currentPage]);
 
   const getChildCategoryItems = async (categoryId: string) => {
     try {
@@ -63,6 +64,7 @@ export const Market = ({navigation}:MarketProps) => {
           Authorization: token
         }
       });
+      console.log(`${baseUrl}/market/category/${categoryId}?page=${currentPage}&limit=${20}`);
       const data = response?.data;
       if (data.statusCode === 200) {
         setItems(prevItems => [...prevItems, ...data.items]);
@@ -85,6 +87,7 @@ export const Market = ({navigation}:MarketProps) => {
           Authorization:token
         }
       })
+      console.log(`${baseUrl}/market?page=${currentPage}&limit=20`)
       const newItems=response?.data?.items;
       setItems(prevItems => [...prevItems, ...newItems]);
       setLoading(false);
@@ -103,7 +106,7 @@ export const Market = ({navigation}:MarketProps) => {
   };
 
   const loadMoreItem = () => {
-    if (!loading) {
+    if (!loading && currentPage*20 <= items.length) {
       setCurrentPage(prevPage => prevPage + 1);
     }
   };
@@ -119,7 +122,7 @@ export const Market = ({navigation}:MarketProps) => {
     return(
       <ItemCard
         _id={item._id} 
-        image={item.image?item.image:''}
+        image={item?.media.images[0]?item?.media.images[0]:''}
         title={item.title}
         category={item.categoryName}
         price={item.price}

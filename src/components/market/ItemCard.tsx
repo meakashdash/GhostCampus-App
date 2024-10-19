@@ -69,7 +69,7 @@ const ItemCard = ({
   }
   return (
     <TouchableOpacity style={styles.container} onPress={handleChangeScreen}>
-      {image?<Image source={{uri: uri}} style={styles.imageCss} />:<Image source={{uri: uri}} style={styles.imageCss} />}
+      {image?<Image source={{uri: image}} style={styles.imageCss} />:<Image source={{uri: uri}} style={styles.imageCss} />}
       <TouchableOpacity style={styles.likeButton} onPress={handleWishlist}>
         {isLiked ? <Liked style={styles.icon} /> : <DisLiked style={styles.icon} />}
       </TouchableOpacity>

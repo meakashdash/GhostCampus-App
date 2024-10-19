@@ -27,11 +27,12 @@ interface ItemDetails {
   description: string;
   price: number;
   categoryId: string;
-  attributes: Attribute[];
+  attributes: {[key: string]: string};
   location: {campus: string; building: string};
   selledid: string;
   createdAt: string;
   category: Category[];
+  media: {images: [string]};
 }
 
 interface Attribute {
@@ -61,6 +62,7 @@ const MarketItem = ({navigation, route}: MarketItemProps) => {
           Authorization: token,
         },
       });
+      console.log(response.data.item);
       setItemDetails(response.data.item);
       setLoading(false);
     } catch (error) {
@@ -117,7 +119,10 @@ const MarketItem = ({navigation, route}: MarketItemProps) => {
       ) : (
         <>
           <View style={styles.imageContainer}>
-            <Image source={{uri: uri}} style={styles.imageCSS} />
+            <Image
+              source={{uri: itemDetails?.media?.images?.[0] || uri}}
+              style={styles.imageCSS}
+            />
             <TouchableOpacity
               style={styles.likeButton}
               onPress={handleWishList}>
@@ -139,12 +144,16 @@ const MarketItem = ({navigation, route}: MarketItemProps) => {
               <View style={styles.divider} />
 
               <View style={styles.detailsSection}>
-                {itemDetails?.attributes.map((attribute, index) => (
-                  <View style={styles.detailRow} key={index}>
-                    <Text style={styles.detailLabel}>{attribute.label}</Text>
-                    <Text style={styles.detailValue}>{attribute.value}</Text>
-                  </View>
-                ))}
+                {itemDetails?.attributes &&
+                  Object.entries(itemDetails.attributes).map(
+                    ([key, value], index) => (
+                      <View style={styles.detailRow} key={index}>
+                        <Text style={styles.detailLabel}>{key}</Text>
+                        <Text style={styles.detailValue}>{value}</Text>
+                      </View>
+                    ),
+                  )}
+
                 <View style={styles.detailRow}>
                   <Text style={styles.detailLabel}>Campus</Text>
                   <Text style={styles.detailValue}>
@@ -158,6 +167,7 @@ const MarketItem = ({navigation, route}: MarketItemProps) => {
                   </Text>
                 </View>
               </View>
+
               <TouchableOpacity style={styles.buyButton}>
                 <View>
                   <ShoppingCart />
