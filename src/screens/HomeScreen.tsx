@@ -180,6 +180,7 @@ export const HomeScreen = (): React.JSX.Element => {
         data={posts}
         renderItem={renderItem}
         ItemSeparatorComponent={ItemSeparatorComponent}
+        style={{backgroundColor: '#000000'}}
         keyExtractor={(item, index) => item._id + index.toString()}
         ListFooterComponent={renderLoader}
         onEndReached={loadMoreItem}
@@ -202,7 +203,7 @@ const styles = StyleSheet.create({
   itemSeparator:{
     height: 7,
     marginVertical: 0,
-    backgroundColor: 'black',
+    backgroundColor: '#000000',
   },
   error:{
     color: 'red',
