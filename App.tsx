@@ -24,6 +24,7 @@ export type RootStackParamList = {
   MarketItem:{_id:string,isLiked:boolean};
   AddPost:undefined;
   AddItemScreen:undefined;
+  Profile:undefined;
 };
 
 function App() {

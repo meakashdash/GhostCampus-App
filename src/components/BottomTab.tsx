@@ -145,10 +145,10 @@ const styles = StyleSheet.create({
   addButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 60,
-    height: 60,
+    width: 70,
+    height: 70,
     borderRadius: 30,
-    backgroundColor: '#FF6B6B',
+    backgroundColor: '#b20000',
     marginTop: -20,
     elevation: 5,
     shadowColor: '#000',
