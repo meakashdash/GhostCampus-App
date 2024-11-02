@@ -19,6 +19,15 @@ import MarketItem from '../screens/MarketItem';
 import { AddPost } from '../screens/AddPost';
 import AddItemScreen from './market/AddItemScreen';
 import { View } from 'react-native';
+import About from './profile/About';
+import ChangePassword from './profile/ChangePassword';
+import ContactUs from './profile/ContactUs';
+import DeleteAccount from './profile/DeleteAccount';
+import MyComments from './profile/MyComments';
+import MyLikes from './profile/MyLikes';
+import MyPosts from './profile/MyPosts';
+import PrivacyPolicy from './profile/PrivacyPolicy';
+import TermsAndConditions from './profile/TermsAndConditions';
 
 const Tab = createBottomTabNavigator();
 
@@ -118,6 +127,78 @@ export const BottomTabWithModals = ({navigation}:BottomTabWithModalProps) => (
         name='AddItemScreen'
         component={AddItemScreen}
         options={{headerShown:false,presentation: 'modal'}}
+    />
+    <RootStack.Screen
+      name="About"
+      component={About}
+      options={{
+        headerShown: false,
+        presentation: 'modal'
+      }}
+    />
+    <RootStack.Screen
+      name="ChangePassword"
+      component={ChangePassword}
+      options={{
+        headerShown: false,
+        presentation: 'modal'
+      }}
+    />
+    <RootStack.Screen
+      name="ContactUs"
+      component={ContactUs}
+      options={{
+        headerShown: false,
+        presentation: 'modal'
+      }}
+    />
+    <RootStack.Screen
+      name="DeleteAccount"
+      component={DeleteAccount}
+      options={{
+        headerShown: false,
+        presentation: 'modal'
+      }}
+    />
+    <RootStack.Screen
+      name="MyComments"
+      component={MyComments}
+      options={{
+        headerShown: false,
+        presentation: 'modal'
+      }}
+    />
+    <RootStack.Screen
+      name="MyLikes"
+      component={MyLikes}
+      options={{
+        headerShown: false,
+        presentation: 'modal'
+      }}
+    />
+    <RootStack.Screen
+      name="MyPosts"
+      component={MyPosts}
+      options={{
+        headerShown: false,
+        presentation: 'modal'
+      }}
+    />
+    <RootStack.Screen
+      name="PrivacyPolicy"
+      component={PrivacyPolicy}
+      options={{
+        headerShown: false,
+        presentation: 'modal'
+      }}
+    />
+    <RootStack.Screen
+      name="TermsAndConditions"
+      component={TermsAndConditions}
+      options={{
+        headerShown: false,
+        presentation: 'modal'
+      }}
     />
   </RootStack.Navigator>
 );

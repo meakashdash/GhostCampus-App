@@ -6,14 +6,13 @@ import {
   View,
   Image,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import axios from 'axios';
 import {baseUrl} from '../URL';
 import {useRecoilState} from 'recoil';
 import {tokenState} from '../context/userContext';
-import RightArrow from '../../assets/icons/profile/RightArrow';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 import Photos from '../../assets/icons/profile/Photos';
@@ -60,126 +59,150 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
     }
   };
 
-  const handleProfileScreenChange = () => {
-    // Logic for profile screen change
+  const handleChangeScreen = (options:string) => {
+    switch(options){
+      case 'Posts':
+        navigation.navigate('MyPosts');
+        break;
+      case 'Comments':
+        navigation.navigate('MyComments');
+        break;
+      case 'Liked':
+        navigation.navigate('MyLikes');
+        break;
+      case 'ChangePassword':
+        navigation.navigate('ChangePassword');
+        break;
+      case 'About':
+        navigation.navigate('About');
+        break;
+      case 'TermsAndConditions':
+        navigation.navigate('TermsAndConditions');
+        break;
+      case 'PrivacyPolicy':
+        navigation.navigate('PrivacyPolicy');
+        break;
+      case 'ContactUs':
+        navigation.navigate('ContactUs');
+        break;
+      case 'DeleteAccount':
+        navigation.navigate('DeleteAccount');
+        break;
+      default:
+        break;
+    }
   };
-
-  // const navigateToPosts = () => {
-  //   navigation.navigate("Posts");  // Assume "Posts" is a defined route
-  // };
-
-  // const navigateToComments = () => {
-  //   navigation.navigate("Comments");  // Assume "Comments" is a defined route
-  // };
 
   const getFirstLetter = (name: string) => name.charAt(0).toUpperCase();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.nameContainer}>
-        {profilePhoto ? (
-          <Image source={{uri: profilePhoto}} style={styles.profileImage} />
-        ) : (
-          <View style={styles.placeholder}>
-            <Text style={styles.placeholderText}>{getFirstLetter(name)}</Text>
+    <SafeAreaView style={[styles.container, {flex: 1}]}>
+      <ScrollView contentContainerStyle={{paddingBottom: 100}}>
+        <View style={styles.nameContainer}>
+          {profilePhoto ? (
+            <Image source={{uri: profilePhoto}} style={styles.profileImage} />
+          ) : (
+            <View style={styles.placeholder}>
+              <Text style={styles.placeholderText}>{getFirstLetter(name)}</Text>
+            </View>
+          )}
+          <View style={styles.textContainer}>
+            <Text style={styles.name}>{name}</Text>
+            <Text style={styles.email}>{email}</Text>
           </View>
-        )}
-        <View style={styles.textContainer}>
-          <Text style={styles.name}>{name}</Text>
-          <Text style={styles.email}>{email}</Text>
+          {/* <RightArrow
+            style={styles.arrowContainer}
+            onPress={handleProfileScreenChange}
+          /> */}
         </View>
-        <RightArrow
-          style={styles.arrowContainer}
-          onPress={handleProfileScreenChange}
-        />
-      </View>
-      <ScrollView>
-      {/* Section with clickable list items */}
-      <View style={styles.listSection}>
-        <TouchableOpacity style={styles.listItem}>
-          <View style={styles.iconLabelContainer}>
-            <Photos />
-            <Text style={styles.listText}>Posts</Text>
-          </View>
-          <RightNav />
-        </TouchableOpacity>
+        <View style={styles.listSection}>
+          <TouchableOpacity style={styles.listItem} onPress={()=>handleChangeScreen('Posts')}>
+            <View style={styles.iconLabelContainer}>
+              <Photos />
+              <Text style={styles.listText}>Posts</Text>
+            </View>
+            <RightNav />
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.listItem}>
-          <View style={styles.iconLabelContainer}>
-            <Comment />
-            <Text style={styles.listText}>Comments</Text>
-          </View>
-          <RightNav />
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.listItem} onPress={()=>handleChangeScreen('Comments')}>
+            <View style={styles.iconLabelContainer}>
+              <Comment />
+              <Text style={styles.listText}>Comments</Text>
+            </View>
+            <RightNav />
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.listItem}>
-          <View style={styles.iconLabelContainer}>
-            <Liked />
-            <Text style={styles.listText}>Liked Posts</Text>
-          </View>
-          <RightNav />
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.listItem} onPress={()=>handleChangeScreen('Liked')}>
+            <View style={styles.iconLabelContainer}>
+              <Liked />
+              <Text style={styles.listText}>Liked Posts</Text>
+            </View>
+            <RightNav />
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.lastListItem}>
-          <View style={styles.iconLabelContainer}>
-            <Lock />
-            <Text style={styles.listText}>Change Password</Text>
-          </View>
-          <RightNav />
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={styles.lastListItem} onPress={()=>handleChangeScreen('ChangePassword')}>
+            <View style={styles.iconLabelContainer}>
+              <Lock />
+              <Text style={styles.listText}>Change Password</Text>
+            </View>
+            <RightNav />
+          </TouchableOpacity>
+        </View>
 
-      <View style={styles.listSection}>
-        <TouchableOpacity style={styles.listItem}>
-          <View style={styles.iconLabelContainer}>
-            <GhostCampus />
-            <Text style={styles.listText}>About GhostCampus</Text>
-          </View>
-          <RightNav />
-        </TouchableOpacity>
+        <View style={styles.listSection}>
+          <TouchableOpacity style={styles.listItem} onPress={()=>handleChangeScreen('About')}>
+            <View style={styles.iconLabelContainer}>
+              <GhostCampus />
+              <Text style={styles.listText}>About GhostCampus</Text>
+            </View>
+            <RightNav />
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.listItem}>
-          <View style={styles.iconLabelContainer}>
-            <TC />
-            <Text style={styles.listText}>Terms and Conditions</Text>
-          </View>
-          <RightNav />
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.listItem} onPress={()=>handleChangeScreen('TermsAndConditions')}>
+            <View style={styles.iconLabelContainer}>
+              <TC />
+              <Text style={styles.listText}>Terms and Conditions</Text>
+            </View>
+            <RightNav />
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.listItem}>
-          <View style={styles.iconLabelContainer}>
-            <Privacy />
-            <Text style={styles.listText}>Privacy Policy</Text>
-          </View>
-          <RightNav />
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.listItem} onPress={()=>handleChangeScreen('PrivacyPolicy')}>
+            <View style={styles.iconLabelContainer}>
+              <Privacy />
+              <Text style={styles.listText}>Privacy Policy</Text>
+            </View>
+            <RightNav />
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.lastListItem}>
-          <View style={styles.iconLabelContainer}>
-            <Contact />
-            <Text style={styles.listText}>Contact Us</Text>
-          </View>
-          <RightNav />
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={styles.lastListItem} onPress={()=>handleChangeScreen('ContactUs')}>
+            <View style={styles.iconLabelContainer}>
+              <Contact />
+              <Text style={styles.listText}>Contact Us</Text>
+            </View>
+            <RightNav />
+          </TouchableOpacity>
+        </View>
 
-      <View style={styles.listSection}>
-        <TouchableOpacity style={styles.listItem}>
-          <View style={styles.iconLabelContainer}>
-            <SignOut />
-            <Text style={styles.listText}>Sign out</Text>
-          </View>
-          <RightNav />
-        </TouchableOpacity>
+        <View style={styles.listSection}>
+          <TouchableOpacity style={styles.listItem}>
+            <View style={styles.iconLabelContainer}>
+              <SignOut />
+              <Text style={styles.listText}>Sign out</Text>
+            </View>
+            <RightNav />
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.lastListItem}>
-          <View style={styles.iconLabelContainer}>
-            <Delete />
-            <Text style={styles.listText}>Delete Account</Text>
-          </View>
-          <RightNav />
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={styles.lastListItem} onPress={()=>handleChangeScreen('DeleteAccount')}>
+            <View style={styles.iconLabelContainer}>
+              <Delete />
+              <Text style={styles.listText}>Delete Account</Text>
+            </View>
+            <RightNav />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.copyrightSection}>
+          <Text style={styles.copyrightText}>© {new Date().getFullYear()} GhostCampus</Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -188,7 +211,6 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#000000',
-    flex: 1,
   },
   nameContainer: {
     backgroundColor: '#2E2C2C',
@@ -212,19 +234,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   placeholderText: {
+    fontFamily:'Montserrat-SemiBold',
     color: '#FFFFFF',
     fontSize: 24,
-    fontWeight: 'bold',
   },
   textContainer: {
     marginLeft: 15,
   },
   name: {
+    fontFamily:'Montserrat-SemiBold',
     color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 18
   },
   email: {
+    fontFamily:'Montserrat-ExtraLightItalic',
     color: '#CCCCCC',
     fontSize: 14,
     marginTop: 4,
@@ -245,7 +268,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 15,
+    paddingVertical: 10,
     paddingHorizontal: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#444444',
@@ -262,8 +285,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   listText: {
+    fontFamily:'Montserrat-Medium',
     color: '#FFFFFF',
     fontSize: 16,
     marginLeft: 10,
+  },
+  copyrightSection: {
+    alignItems: 'center',
+    marginTop: 20,
+    paddingVertical: 10,
+  },
+  copyrightText: {
+    fontFamily:'Montserrat-Light',
+    color: '#CCCCCC',
+    fontSize: 14,
   },
 });

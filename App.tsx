@@ -25,6 +25,15 @@ export type RootStackParamList = {
   AddPost:undefined;
   AddItemScreen:undefined;
   Profile:undefined;
+  About:undefined;
+  ChangePassword:undefined;
+  ContactUs:undefined;
+  DeleteAccount:undefined;
+  MyComments:undefined;
+  MyLikes:undefined;
+  MyPosts:undefined;
+  PrivacyPolicy:undefined;
+  TermsAndConditions:undefined;
 };
 
 function App() {
