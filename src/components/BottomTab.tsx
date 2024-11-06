@@ -25,7 +25,7 @@ import ContactUs from './profile/ContactUs';
 import DeleteAccount from './profile/DeleteAccount';
 import MyComments from './profile/MyComments';
 import MyLikes from './profile/MyLikes';
-import MyPosts from './profile/MyPosts';
+import {MyPosts} from './profile/MyPosts';
 import PrivacyPolicy from './profile/PrivacyPolicy';
 import TermsAndConditions from './profile/TermsAndConditions';
 
