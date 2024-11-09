@@ -43,7 +43,7 @@ export const MyPosts = (): React.JSX.Element => {
   const [downvotes, setDownVotes] = useRecoilState(downVotePostState);
 
   useEffect(() => {
-    console.log('Homescreen');
+    console.log('My Posts');
     getLikedPosts();
     getBookmarkedPosts();
     getDownvotedPosts();
