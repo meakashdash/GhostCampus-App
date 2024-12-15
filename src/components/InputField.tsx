@@ -37,6 +37,6 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     paddingHorizontal: 10,
     fontFamily: 'Montserrat-Medium',
-    color:"#ffffff"
+    color:"#eeeeee"
   },
 });
