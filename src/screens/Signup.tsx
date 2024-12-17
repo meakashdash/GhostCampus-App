@@ -56,7 +56,7 @@ export const Signup = ({navigation}:SignupProps): React.JSX.Element => {
     }
   };
   const handleChangeScreen = () => {
-    navigation.navigate('Login');
+    navigation.replace('Login');
   };
   return (
     <SafeAreaView>

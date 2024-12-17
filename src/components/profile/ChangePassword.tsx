@@ -63,7 +63,7 @@ const ChangePassword = ({navigation}: ChangePasswordStackProps) => {
         await removeToken();
         setToken('');
         setUserId('');
-        navigation.navigate('Login');
+        navigation.replace('Login');
     }else{
         ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
     }

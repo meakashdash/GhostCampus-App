@@ -7,12 +7,15 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Modal,
+  TouchableWithoutFeedback,
+  Dimensions,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import axios from 'axios';
 import {baseUrl} from '../URL';
 import {useRecoilState} from 'recoil';
-import {tokenState} from '../context/userContext';
+import {tokenState, userIdState} from '../context/userContext';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 import Photos from '../../assets/icons/profile/Photos';
@@ -26,6 +29,9 @@ import Privacy from '../../assets/icons/profile/Privacy';
 import Contact from '../../assets/icons/profile/Contact';
 import Delete from '../../assets/icons/profile/Delete';
 import SignOut from '../../assets/icons/profile/SignOut';
+import {removeToken} from '../utils/storage';
+
+const {width, height} = Dimensions.get('window');
 
 type ProfileProps = NativeStackScreenProps<RootStackParamList, 'Profile'>;
 
@@ -34,6 +40,8 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [signOutModalVisible, setSignOutModalVisible] = useState(false);
+  const [userId, setUserId] = useRecoilState(userIdState);
 
   useEffect(() => {
     getUserDetails();
@@ -59,8 +67,8 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
     }
   };
 
-  const handleChangeScreen = (options:string) => {
-    switch(options){
+  const handleChangeScreen = (options: string) => {
+    switch (options) {
       case 'Posts':
         navigation.navigate('MyPosts');
         break;
@@ -95,6 +103,50 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
 
   const getFirstLetter = (name: string) => name.charAt(0).toUpperCase();
 
+  const handleCloseSignOutModal = () => {
+    setSignOutModalVisible(false);
+  };
+
+  const showSignOutModal = () => {
+    setSignOutModalVisible(true);
+  };
+
+  const renderSignOutModal = () => (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={signOutModalVisible}
+      onRequestClose={handleCloseSignOutModal}>
+      <TouchableWithoutFeedback onPress={handleCloseSignOutModal}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>
+              Are you sure you want to sign out?
+            </Text>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[styles.modalButton, {backgroundColor: '#666666'}]}
+                onPress={async () => {
+                  setSignOutModalVisible(false);
+                  await removeToken();
+                  setToken('');
+                  setUserId('');
+                  navigation.replace('Login');
+                }}>
+                <Text style={styles.modalButtonText}>Yes</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, {backgroundColor: '#B20000'}]}
+                onPress={handleCloseSignOutModal}>
+                <Text style={styles.modalButtonText}>No</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
+
   return (
     <SafeAreaView style={[styles.container, {flex: 1}]}>
       <ScrollView contentContainerStyle={{paddingBottom: 100}}>
@@ -116,7 +168,9 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
           /> */}
         </View>
         <View style={styles.listSection}>
-          <TouchableOpacity style={styles.listItem} onPress={()=>handleChangeScreen('Posts')}>
+          <TouchableOpacity
+            style={styles.listItem}
+            onPress={() => handleChangeScreen('Posts')}>
             <View style={styles.iconLabelContainer}>
               <Photos />
               <Text style={styles.listText}>Posts</Text>
@@ -124,7 +178,9 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
             <RightNav />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.listItem} onPress={()=>handleChangeScreen('Comments')}>
+          <TouchableOpacity
+            style={styles.listItem}
+            onPress={() => handleChangeScreen('Comments')}>
             <View style={styles.iconLabelContainer}>
               <Comment />
               <Text style={styles.listText}>Comments</Text>
@@ -132,7 +188,9 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
             <RightNav />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.listItem} onPress={()=>handleChangeScreen('Liked')}>
+          <TouchableOpacity
+            style={styles.listItem}
+            onPress={() => handleChangeScreen('Liked')}>
             <View style={styles.iconLabelContainer}>
               <Liked />
               <Text style={styles.listText}>Liked Posts</Text>
@@ -140,7 +198,9 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
             <RightNav />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.lastListItem} onPress={()=>handleChangeScreen('ChangePassword')}>
+          <TouchableOpacity
+            style={styles.lastListItem}
+            onPress={() => handleChangeScreen('ChangePassword')}>
             <View style={styles.iconLabelContainer}>
               <Lock />
               <Text style={styles.listText}>Change Password</Text>
@@ -150,7 +210,9 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
         </View>
 
         <View style={styles.listSection}>
-          <TouchableOpacity style={styles.listItem} onPress={()=>handleChangeScreen('About')}>
+          <TouchableOpacity
+            style={styles.listItem}
+            onPress={() => handleChangeScreen('About')}>
             <View style={styles.iconLabelContainer}>
               <GhostCampus />
               <Text style={styles.listText}>About GhostCampus</Text>
@@ -158,7 +220,9 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
             <RightNav />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.listItem} onPress={()=>handleChangeScreen('TermsAndConditions')}>
+          <TouchableOpacity
+            style={styles.listItem}
+            onPress={() => handleChangeScreen('TermsAndConditions')}>
             <View style={styles.iconLabelContainer}>
               <TC />
               <Text style={styles.listText}>Terms and Conditions</Text>
@@ -166,7 +230,9 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
             <RightNav />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.listItem} onPress={()=>handleChangeScreen('PrivacyPolicy')}>
+          <TouchableOpacity
+            style={styles.listItem}
+            onPress={() => handleChangeScreen('PrivacyPolicy')}>
             <View style={styles.iconLabelContainer}>
               <Privacy />
               <Text style={styles.listText}>Privacy Policy</Text>
@@ -174,7 +240,9 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
             <RightNav />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.lastListItem} onPress={()=>handleChangeScreen('ContactUs')}>
+          <TouchableOpacity
+            style={styles.lastListItem}
+            onPress={() => handleChangeScreen('ContactUs')}>
             <View style={styles.iconLabelContainer}>
               <Contact />
               <Text style={styles.listText}>Contact Us</Text>
@@ -184,7 +252,7 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
         </View>
 
         <View style={styles.listSection}>
-          <TouchableOpacity style={styles.listItem}>
+          <TouchableOpacity style={styles.listItem} onPress={showSignOutModal}>
             <View style={styles.iconLabelContainer}>
               <SignOut />
               <Text style={styles.listText}>Sign out</Text>
@@ -192,7 +260,9 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
             <RightNav />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.lastListItem} onPress={()=>handleChangeScreen('DeleteAccount')}>
+          <TouchableOpacity
+            style={styles.lastListItem}
+            onPress={() => handleChangeScreen('DeleteAccount')}>
             <View style={styles.iconLabelContainer}>
               <Delete />
               <Text style={styles.listText}>Delete Account</Text>
@@ -201,8 +271,11 @@ export const Profile = ({navigation}: ProfileProps): React.JSX.Element => {
           </TouchableOpacity>
         </View>
         <View style={styles.copyrightSection}>
-          <Text style={styles.copyrightText}>© {new Date().getFullYear()} GhostCampus</Text>
+          <Text style={styles.copyrightText}>
+            © {new Date().getFullYear()} GhostCampus
+          </Text>
         </View>
+        {signOutModalVisible && renderSignOutModal()}
       </ScrollView>
     </SafeAreaView>
   );
@@ -234,7 +307,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   placeholderText: {
-    fontFamily:'Montserrat-SemiBold',
+    fontFamily: 'Montserrat-SemiBold',
     color: '#FFFFFF',
     fontSize: 24,
   },
@@ -242,12 +315,12 @@ const styles = StyleSheet.create({
     marginLeft: 15,
   },
   name: {
-    fontFamily:'Montserrat-SemiBold',
+    fontFamily: 'Montserrat-SemiBold',
     color: '#FFFFFF',
-    fontSize: 18
+    fontSize: 18,
   },
   email: {
-    fontFamily:'Montserrat-ExtraLightItalic',
+    fontFamily: 'Montserrat-ExtraLightItalic',
     color: '#CCCCCC',
     fontSize: 14,
     marginTop: 4,
@@ -285,7 +358,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   listText: {
-    fontFamily:'Montserrat-Medium',
+    fontFamily: 'Montserrat-Medium',
     color: '#FFFFFF',
     fontSize: 16,
     marginLeft: 10,
@@ -296,8 +369,52 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   copyrightText: {
-    fontFamily:'Montserrat-Light',
+    fontFamily: 'Montserrat-Light',
     color: '#CCCCCC',
     fontSize: 14,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#2C2C2E',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: width * 0.044,
+    paddingVertical: height * 0.021,
+  },
+  moodContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    borderRadius: 25,
+    paddingHorizontal: 0.022,
+    paddingVertical: 0.01,
+    marginBottom: 20,
+  },
+  modalTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontFamily: 'Montserrat-SemiBold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
+  },
+  modalButton: {
+    width: '45%',
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    fontFamily: 'Montserrat-Medium',
+    color: '#FFFFFF',
+    fontSize: 16,
   },
 });
