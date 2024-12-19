@@ -6,23 +6,43 @@ import {
   TouchableOpacity,
   Alert,
   Dimensions,
+  ToastAndroid,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../App';
+import axios from 'axios';
+import { baseUrl } from '../../URL';
+import { useRecoilState } from 'recoil';
+import { tokenState, userIdState } from '../../context/userContext';
+import { removeToken } from '../../utils/storage';
+import Toast from 'react-native-toast-message';
 
 const {width} = Dimensions.get('window');
 
 type DeleteAccountStackProps = NativeStackScreenProps<RootStackParamList, 'DeleteAccount'>;
 
 const DeleteAccount = ({navigation}: DeleteAccountStackProps) => {
-
-  const handleDeleteAccount = () => {
-    Alert.alert(
-      'Account Deleted',
-      'Your account has been successfully deleted.',
-      [{text: 'OK', onPress: () => navigation.replace('Login')}]
-    );
+  const [token, setToken] = useRecoilState(tokenState);
+  const [userId, setUserId] = useRecoilState(userIdState);
+  const handleDeleteAccount = async() => {
+    try {
+      const response=await axios.post(`${baseUrl}/user/delete`,{},{
+        headers:{
+          Authorization: token
+        }
+      })
+      console.log(response.data);
+      await removeToken();
+      setToken('');
+      setUserId('');
+      navigation.replace('Login');
+      ToastAndroid.show("Account Deleted Successfully", ToastAndroid.SHORT);
+    } catch (error) {
+      console.log("Error while deleting account: ", error);
+      throw new Error("Error while deleting account");
+      ToastAndroid.show("Error while deleting account", ToastAndroid.SHORT);
+    }
   };
 
   const handleCancelDelete = () => {
